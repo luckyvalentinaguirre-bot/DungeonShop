@@ -30,7 +30,7 @@ Estamos en **desarrollo por fases**. No se avanza de fase hasta cerrar la anteri
 | 4 | Clientes | ✅ Completada (modelo híbrido + tests) |
 | 5 | Objetos | ✅ Completada (inventario + catálogo + tests) |
 | 6 | Fabricación | ✅ Completada (rasgos de material + tests) |
-| 7 | Interfaz | ⬜ Pendiente (próxima) |
+| 7 | Interfaz | 🟡 En progreso (¡primera versión jugable!) |
 | 8 | Guardado | ⬜ Pendiente |
 | 9 | Pulido | ⬜ Pendiente |
 

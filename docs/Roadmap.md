@@ -131,13 +131,35 @@ godot --headless --path . --script res://tests/run_tests.gd    # todos los tests
 
 ---
 
-## Fase 7 — Interfaz
+## Fase 7 — Interfaz 🟡 (en progreso)
 
-- Escenas y UI de tienda, mostrador, inventario, fabricación, mercado, diálogo, HUD.
-- Sistema de diálogo ([systems/10](systems/10_Dialogue.md)) y misiones/tutorial
-  ([systems/11](systems/11_Quests.md)).
-- Input map final y soporte de mando ([systems/13](systems/13_Controls.md)).
-- **DoD:** el bucle central es jugable con ratón de principio a fin.
+Se construye por incrementos jugables. La UI se genera por código (escenas `.tscn`
+mínimas + scripts de pantalla), robusta y convertible a escenas de editor para pulir.
+
+**Incremento 1 — Primera versión JUGABLE ✅**
+- [x] Autoloads `GameState` (estado de partida: oro, jornada, economía, stock,
+      clientela) y `SceneRouter` (cambio de escena).
+- [x] `MainMenu` (nueva partida / salir) y `ShopScreen` (HUD + mostrador + stock + log).
+- [x] Bucle central jugable con ratón: atender clientes (mostrador con regateo por
+      precio ±, y autoservicio de estantería), vender del stock, avanzar jornada.
+- [x] `UiFactory` (widgets con estilo cozy por código).
+
+**Pendiente (próximos incrementos de la Fase 7):**
+- [ ] Panel de fabricación (usar `CraftingResolver` desde la UI, consumir materiales).
+- [ ] Panel de inventario/almacén con arrastrar-soltar.
+- [ ] Sistema de diálogo ([systems/10](systems/10_Dialogue.md)) para clientes recurrentes.
+- [ ] Misiones/tutorial ([systems/11](systems/11_Quests.md)).
+- [ ] Mercado de compra de materiales.
+- [ ] Input map final y soporte de mando ([systems/13](systems/13_Controls.md)).
+- **DoD:** el bucle central es jugable con ratón de principio a fin *(ya alcanzado
+  para vender; se amplía con fabricar/comprar/misiones)*.
+
+### Cómo probarlo (Godot 4.3+)
+Abre el proyecto en el editor y pulsa **F5** (la escena principal es el menú), o:
+```bash
+godot --path .            # ejecuta el juego (menú → nueva partida → tienda)
+godot --headless --path . --script res://tests/run_tests.gd   # tests de la lógica
+```
 
 ---
 
