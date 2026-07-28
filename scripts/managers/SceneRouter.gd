@@ -6,6 +6,7 @@ extends Node
 ## NO declara class_name para no chocar con el nombre del singleton.
 
 const MAIN_MENU := "res://scenes/main_menu/MainMenu.tscn"
+const INTRO := "res://scenes/main_menu/IntroCinematic.tscn"
 const SHOP := "res://scenes/shop/Shop.tscn"
 const SHOP_COUNTER := "res://scenes/shop/ShopCounter.tscn"
 const SHOP_WORLD := "res://scenes/shop/ShopWorld.tscn"
@@ -23,6 +24,10 @@ func goto_counter() -> void:
 
 func goto_main_menu() -> void:
 	goto(MAIN_MENU)
+
+## Cinematica de introduccion (se juega al empezar una partida nueva).
+func goto_intro() -> void:
+	goto(INTRO)
 
 func goto_crafting() -> void:
 	goto(CRAFTING)

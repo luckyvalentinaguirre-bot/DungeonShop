@@ -255,8 +255,8 @@ func _pop(b: Button, target: float) -> void:
 
 # ------------------------------------------------------------------- acciones
 func _on_new_game() -> void:
-	GameState.new_game()
-	SceneRouter.goto_counter()
+	# La partida nueva se crea al terminar la cinematica de introduccion.
+	SceneRouter.goto_intro()
 
 func _on_load() -> void:
 	if SaveManager.has_save(1) and SaveManager.load_game(1):
