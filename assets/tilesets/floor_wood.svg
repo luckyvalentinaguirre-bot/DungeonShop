@@ -1,0 +1,28 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="pl" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8a5a30"/>
+      <stop offset="1" stop-color="#6f4522"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" fill="url(#pl)"/>
+  <!-- tablones -->
+  <g stroke="#5a3417" stroke-width="1.5" opacity="0.8">
+    <line x1="0" y1="16" x2="64" y2="16"/>
+    <line x1="0" y1="32" x2="64" y2="32"/>
+    <line x1="0" y1="48" x2="64" y2="48"/>
+    <line x1="22" y1="0" x2="22" y2="16"/>
+    <line x1="46" y1="16" x2="46" y2="32"/>
+    <line x1="16" y1="32" x2="16" y2="48"/>
+    <line x1="42" y1="48" x2="42" y2="64"/>
+  </g>
+  <!-- veta -->
+  <g stroke="#7a4c26" stroke-width="1" opacity="0.5" fill="none">
+    <path d="M4 8 q14 2 28 0 t28 0"/>
+    <path d="M4 24 q14 -2 28 0 t28 0"/>
+    <path d="M4 40 q14 2 28 0 t28 0"/>
+    <path d="M4 56 q14 -2 28 0 t28 0"/>
+  </g>
+  <!-- brillo superior sutil -->
+  <rect width="64" height="3" fill="#a87844" opacity="0.35"/>
+</svg>

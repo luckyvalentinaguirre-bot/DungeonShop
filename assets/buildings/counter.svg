@@ -1,0 +1,20 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Mostrador de madera visto desde arriba. -->
+  <rect x="4" y="12" width="56" height="44" rx="4" fill="#000000" opacity="0.18"/>
+  <rect x="3" y="8" width="58" height="46" rx="4" fill="#7a4a24" stroke="#3a2412" stroke-width="2.5"/>
+  <!-- superficie pulida -->
+  <rect x="7" y="12" width="50" height="38" rx="3" fill="#9a6636"/>
+  <!-- vetas de la superficie -->
+  <g stroke="#7a4c26" stroke-width="1.2" opacity="0.6" fill="none">
+    <path d="M10 20 q22 -3 44 0"/>
+    <path d="M10 30 q22 3 44 0"/>
+    <path d="M10 40 q22 -3 44 0"/>
+  </g>
+  <!-- caja registradora / libro de cuentas -->
+  <rect x="40" y="16" width="14" height="12" rx="2" fill="#c9a24a" stroke="#7a5a1e" stroke-width="1.5"/>
+  <rect x="42" y="18" width="10" height="4" rx="1" fill="#f4e7c2"/>
+  <!-- moneda -->
+  <circle cx="14" cy="42" r="4" fill="#e8c24a" stroke="#a8841e" stroke-width="1"/>
+  <!-- borde iluminado -->
+  <rect x="3" y="8" width="58" height="4" rx="2" fill="#a8703a"/>
+</svg>

@@ -26,10 +26,13 @@ var _wanderers: Array = []
 ## Tormenta: temporizador y brillo del relámpago.
 var _lightning_timer: float = 6.0
 var _flash: float = 0.0
+## Texturas (sprites SVG). key -> Texture2D.
+var _tex: Dictionary = {}
 
 func _ready() -> void:
 	if GameState.economy == null:
 		GameState.new_game()
+	_load_textures()
 	_assignable_ids = _build_assignable_ids()
 	_build_camera()
 	_build_ambient()
@@ -107,11 +110,13 @@ func _build_forge_smoke() -> void:
 	add_child(smoke)
 
 func _build_wanderers() -> void:
-	var colors := [Color(0.8, 0.5, 0.4), Color(0.5, 0.6, 0.8), Color(0.6, 0.75, 0.55), Color(0.75, 0.6, 0.8)]
+	var texes := ["shopper1", "shopper2", "shopper3"]
+	var colors := [Color(0.8, 0.5, 0.4), Color(0.5, 0.6, 0.8), Color(0.6, 0.75, 0.55)]
 	for i in 3:
 		_wanderers.append({
 			"pos": _random_walk_point(),
 			"target": _random_walk_point(),
+			"tex": texes[i % texes.size()],
 			"color": colors[i % colors.size()],
 			"phase": randf() * TAU,
 			"speed": randf_range(28.0, 46.0),
@@ -275,6 +280,31 @@ func _build_assignable_ids() -> Array:
 	ids.sort()
 	return ids
 
+# ------------------------------------------------------------------- texturas
+func _load_textures() -> void:
+	_tex = {
+		"floor": _load_tex("res://assets/tilesets/floor_wood.svg"),
+		"wall": _load_tex("res://assets/tilesets/wall_stone.svg"),
+		"shelf": _load_tex("res://assets/buildings/shelf.svg"),
+		"counter": _load_tex("res://assets/buildings/counter.svg"),
+		"plant": _load_tex("res://assets/buildings/plant.svg"),
+		"barrel": _load_tex("res://assets/buildings/barrel.svg"),
+		"rug": _load_tex("res://assets/buildings/rug.svg"),
+		"torch": _load_tex("res://assets/buildings/torch.svg"),
+		"potion": _load_tex("res://assets/items/icon_potion.svg"),
+		"sword": _load_tex("res://assets/items/icon_sword.svg"),
+		"armor": _load_tex("res://assets/items/icon_armor.svg"),
+		"tool": _load_tex("res://assets/items/icon_tool.svg"),
+		"material": _load_tex("res://assets/items/icon_material.svg"),
+		"magic": _load_tex("res://assets/items/icon_magic.svg"),
+		"shopper1": _load_tex("res://assets/characters/shopper_top_1.svg"),
+		"shopper2": _load_tex("res://assets/characters/shopper_top_2.svg"),
+		"shopper3": _load_tex("res://assets/characters/shopper_top_3.svg"),
+	}
+
+func _load_tex(path: String) -> Texture2D:
+	return load(path) if ResourceLoader.exists(path) else null
+
 # ------------------------------------------------------------------- dibujo
 func _draw() -> void:
 	var layout := GameState.layout
@@ -282,6 +312,7 @@ func _draw() -> void:
 	for y in layout.height:
 		for x in layout.width:
 			_draw_floor(x, y, polish)
+	_draw_walls()
 	# Muebles encima del suelo.
 	for y in layout.height:
 		for x in layout.width:
@@ -293,7 +324,6 @@ func _draw() -> void:
 				ShopLayout.Furniture.DECOR:
 					_draw_decor(x, y)
 	_draw_wanderers()
-	_draw_walls()
 	_draw_torches()
 	# Destello de relámpago (tormenta).
 	if _flash > 0.0:
@@ -303,70 +333,93 @@ func _tile_rect(x: int, y: int) -> Rect2:
 	return Rect2(x * TILE, y * TILE, TILE, TILE)
 
 func _draw_floor(x: int, y: int, polish: float) -> void:
-	var warm := Color(0.42, 0.30, 0.18).lerp(Color(0.58, 0.42, 0.26), polish)
-	var alt := warm.darkened(0.08) if (x + y) % 2 == 0 else warm
-	draw_rect(_tile_rect(x, y), alt, true)
-	draw_rect(_tile_rect(x, y), Color(0, 0, 0, 0.10), false, 1.0)
+	var rect := _tile_rect(x, y)
+	var floor_tex: Texture2D = _tex.get("floor")
+	if floor_tex != null:
+		# Un poco más luminoso con el prestigio; tablero para dar variedad.
+		var tint := Color(0.82, 0.82, 0.82).lerp(Color(1, 1, 1), polish)
+		if (x + y) % 2 == 1:
+			tint = tint.darkened(0.06)
+		draw_texture_rect(floor_tex, rect, false, tint)
+	else:
+		var warm := Color(0.42, 0.30, 0.18).lerp(Color(0.58, 0.42, 0.26), polish)
+		draw_rect(rect, warm.darkened(0.08) if (x + y) % 2 == 0 else warm, true)
 
 func _draw_counter(x: int, y: int) -> void:
-	var r := _tile_rect(x, y).grow(-4)
-	draw_rect(r, Color(0.45, 0.30, 0.16), true)
-	draw_rect(Rect2(r.position, Vector2(r.size.x, 8)), Color(0.65, 0.46, 0.26), true)
-	draw_rect(r, Color(0.2, 0.12, 0.06), false, 2.0)
+	var tex: Texture2D = _tex.get("counter")
+	if tex != null:
+		draw_texture_rect(tex, _tile_rect(x, y), false)
+	else:
+		draw_rect(_tile_rect(x, y).grow(-4), Color(0.45, 0.30, 0.16), true)
 
 func _draw_shelf(x: int, y: int) -> void:
-	var r := _tile_rect(x, y).grow(-4)
-	draw_rect(r, Color(0.36, 0.24, 0.13), true)
-	draw_rect(r, Color(0.2, 0.12, 0.06), false, 2.0)
-	# Producto expuesto.
+	var rect := _tile_rect(x, y)
+	var tex: Texture2D = _tex.get("shelf")
+	if tex != null:
+		draw_texture_rect(tex, rect, false)
+	else:
+		draw_rect(rect.grow(-4), Color(0.36, 0.24, 0.13), true)
+	# Producto expuesto: su icono según categoría.
 	var item_id := GameState.layout.assigned_item(x, y)
 	if item_id != &"":
 		var item := GameState.item_db.get_item(item_id)
 		if item != null:
-			var pr := Rect2(r.position + Vector2(10, 10), Vector2(r.size.x - 20, r.size.y - 24))
-			draw_rect(pr, _category_color(item.category), true)
-			draw_rect(pr, Color(0, 0, 0, 0.35), false, 1.0)
-			var font := ThemeDB.fallback_font
-			if font != null:
-				draw_string(font, r.position + Vector2(6, r.size.y - 4), item.display_name.left(8), HORIZONTAL_ALIGNMENT_LEFT, r.size.x, 11, Color(1, 1, 1, 0.85))
+			var c := rect.get_center()
+			var icon := _category_icon(item.category)
+			if icon != null:
+				draw_texture_rect(icon, Rect2(c - Vector2(15, 17), Vector2(30, 30)), false)
+			else:
+				draw_rect(Rect2(c - Vector2(10, 10), Vector2(20, 20)), _category_color(item.category), true)
 
 func _draw_decor(x: int, y: int) -> void:
-	var c := _tile_rect(x, y).get_center()
-	# Una plantita en maceta como placeholder.
-	draw_rect(Rect2(c + Vector2(-10, 6), Vector2(20, 14)), Color(0.5, 0.3, 0.2), true)
-	draw_circle(c + Vector2(0, -2), 14, Color(0.3, 0.55, 0.3))
-	draw_circle(c + Vector2(-6, -8), 8, Color(0.35, 0.6, 0.35))
-	draw_circle(c + Vector2(7, -6), 8, Color(0.32, 0.58, 0.32))
+	var key := "plant" if (x + y) % 2 == 0 else "barrel"
+	var tex: Texture2D = _tex.get(key)
+	if tex != null:
+		draw_texture_rect(tex, _tile_rect(x, y), false)
+	else:
+		var c := _tile_rect(x, y).get_center()
+		draw_circle(c + Vector2(0, -2), 14, Color(0.3, 0.55, 0.3))
 
 func _draw_wanderers() -> void:
 	for w in _wanderers:
 		var pos: Vector2 = w["pos"]
 		var bob := sin(float(w["phase"])) * 2.0
-		var color: Color = w["color"]
-		# Sombra.
-		draw_circle(pos + Vector2(0, 10), 7.0, Color(0, 0, 0, 0.18))
-		# Cuerpo y cabeza (mini figura cenital).
-		draw_circle(pos + Vector2(0, bob), 9.0, color)
-		draw_circle(pos + Vector2(0, -6 + bob), 5.5, Color(0.95, 0.85, 0.72))
+		draw_circle(pos + Vector2(0, 12), 8.0, Color(0, 0, 0, 0.15))
+		var tex: Texture2D = _tex.get(w.get("tex", "shopper1"))
+		if tex != null:
+			draw_texture_rect(tex, Rect2(pos - Vector2(14, 22 - bob), Vector2(28, 32)), false)
+		else:
+			var color: Color = w.get("color", Color(0.8, 0.5, 0.4))
+			draw_circle(pos + Vector2(0, bob), 9.0, color)
 
 func _draw_walls() -> void:
-	var grid := _grid_size()
-	draw_rect(Rect2(Vector2.ZERO, grid), Color(0.15, 0.10, 0.06), false, 6.0)
+	var tex: Texture2D = _tex.get("wall")
+	var w := GameState.layout.width
+	var h := GameState.layout.height
+	if tex == null:
+		draw_rect(Rect2(Vector2.ZERO, _grid_size()), Color(0.15, 0.10, 0.06), false, 6.0)
+		return
+	for x in range(-1, w + 1):
+		draw_texture_rect(tex, _tile_rect(x, -1), false)
+		draw_texture_rect(tex, _tile_rect(x, h), false)
+	for y in range(0, h):
+		draw_texture_rect(tex, _tile_rect(-1, y), false)
+		draw_texture_rect(tex, _tile_rect(w, y), false)
 
 func _draw_torches() -> void:
-	# Antorchas en las esquinas con parpadeo; iluminan más de noche.
+	# Antorchas en la pared superior con parpadeo; iluminan más de noche.
 	var grid := _grid_size()
 	var night := 1.0 - GameState.clock.daylight()
 	var flicker := 0.75 + 0.25 * sin(_time_accum * 9.0)
-	var spots := [Vector2(TILE * 0.5, TILE * 0.5), Vector2(grid.x - TILE * 0.5, TILE * 0.5)]
+	var tex: Texture2D = _tex.get("torch")
+	var spots := [Vector2(TILE * 0.5, TILE * 0.15), Vector2(grid.x - TILE * 0.5, TILE * 0.15)]
 	for spot in spots:
-		# Base de la antorcha.
-		draw_rect(Rect2(spot + Vector2(-3, 0), Vector2(6, 16)), Color(0.35, 0.22, 0.12), true)
-		# Llama.
-		draw_circle(spot, 6.0 * flicker, Color(1.0, 0.7, 0.25))
-		draw_circle(spot, 3.5 * flicker, Color(1.0, 0.92, 0.6))
-		# Halo de luz (más visible de noche).
-		draw_circle(spot, 46.0 * flicker, Color(1.0, 0.75, 0.35, 0.10 + 0.22 * night))
+		if tex != null:
+			draw_texture_rect(tex, Rect2(spot - Vector2(12, 6), Vector2(24, 36)), false)
+		var flame := spot - Vector2(0, 4)
+		draw_circle(flame, 5.0 * flicker, Color(1.0, 0.7, 0.25))
+		draw_circle(flame, 3.0 * flicker, Color(1.0, 0.92, 0.6))
+		draw_circle(flame, 48.0 * flicker, Color(1.0, 0.75, 0.35, 0.08 + 0.24 * night))
 
 # ------------------------------------------------------------------- clima/estado
 func _polish() -> float:
@@ -401,3 +454,13 @@ func _category_color(category: int) -> Color:
 		GameEnums.Category.MAGIC: return Color(0.4, 0.8, 0.75)
 		GameEnums.Category.MATERIAL: return Color(0.55, 0.45, 0.35)
 		_: return Color(0.6, 0.6, 0.6)
+
+func _category_icon(category: int) -> Texture2D:
+	match category:
+		GameEnums.Category.WEAPON: return _tex.get("sword")
+		GameEnums.Category.ARMOR: return _tex.get("armor")
+		GameEnums.Category.POTION: return _tex.get("potion")
+		GameEnums.Category.TOOL: return _tex.get("tool")
+		GameEnums.Category.MAGIC: return _tex.get("magic")
+		GameEnums.Category.MATERIAL: return _tex.get("material")
+		_: return null

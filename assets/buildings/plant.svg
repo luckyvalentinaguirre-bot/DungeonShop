@@ -1,0 +1,20 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Planta en maceta vista desde arriba. -->
+  <ellipse cx="32" cy="50" rx="16" ry="6" fill="#000000" opacity="0.18"/>
+  <!-- maceta -->
+  <path d="M20 40 h24 l-3 14 h-18 z" fill="#a4562e" stroke="#5a2f16" stroke-width="2"/>
+  <ellipse cx="32" cy="40" rx="12" ry="5" fill="#c46a3a" stroke="#5a2f16" stroke-width="2"/>
+  <ellipse cx="32" cy="39" rx="9" ry="3.5" fill="#5a3a20"/>
+  <!-- follaje -->
+  <g stroke="#20401f" stroke-width="1">
+    <circle cx="32" cy="24" r="13" fill="#3b7a34"/>
+    <circle cx="22" cy="28" r="9" fill="#469142"/>
+    <circle cx="42" cy="28" r="9" fill="#3f8339"/>
+    <circle cx="32" cy="18" r="8" fill="#54a04c"/>
+  </g>
+  <!-- toques de luz -->
+  <g fill="#7cc271" opacity="0.7">
+    <circle cx="28" cy="20" r="2.5"/>
+    <circle cx="38" cy="26" r="2"/>
+  </g>
+</svg>

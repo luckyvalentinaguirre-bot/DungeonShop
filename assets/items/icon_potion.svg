@@ -1,0 +1,9 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Poción: frasco con líquido y brillo. -->
+  <rect x="13" y="4" width="6" height="6" rx="1" fill="#9a7a4a" stroke="#3a2a12" stroke-width="1.2"/>
+  <path d="M12 9 h8 l2 6 a8 8 0 1 1 -14 0 z" fill="#2f6f9a" stroke="#1a2a3a" stroke-width="1.5"/>
+  <path d="M11 17 a7 7 0 0 0 12 3 a7 7 0 0 1 -12 -3 z" fill="#4a9fd0" opacity="0.8"/>
+  <circle cx="14" cy="20" r="1.6" fill="#bfe6ff"/>
+  <circle cx="18" cy="24" r="1.2" fill="#bfe6ff"/>
+  <path d="M13 12 q2 -1 3 0" stroke="#cfeaff" stroke-width="1.2" fill="none"/>
+</svg>

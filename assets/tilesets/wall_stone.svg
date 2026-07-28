@@ -1,0 +1,28 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="st" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6b6660"/>
+      <stop offset="1" stop-color="#4c4842"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" fill="url(#st)"/>
+  <!-- sillería (ladrillos de piedra) -->
+  <g fill="#7a746c" stroke="#3a3630" stroke-width="1.5">
+    <rect x="2" y="2" width="28" height="14" rx="2"/>
+    <rect x="34" y="2" width="28" height="14" rx="2"/>
+    <rect x="14" y="18" width="28" height="14" rx="2"/>
+    <rect x="-2" y="18" width="14" height="14" rx="2"/>
+    <rect x="46" y="18" width="20" height="14" rx="2"/>
+    <rect x="2" y="34" width="28" height="14" rx="2"/>
+    <rect x="34" y="34" width="28" height="14" rx="2"/>
+    <rect x="14" y="50" width="28" height="12" rx="2"/>
+    <rect x="-2" y="50" width="14" height="12" rx="2"/>
+    <rect x="46" y="50" width="20" height="12" rx="2"/>
+  </g>
+  <!-- musgo/desgaste -->
+  <g fill="#5f6b46" opacity="0.5">
+    <circle cx="8" cy="10" r="2"/>
+    <circle cx="40" cy="42" r="2.5"/>
+    <circle cx="52" cy="24" r="2"/>
+  </g>
+</svg>

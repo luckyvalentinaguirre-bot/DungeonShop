@@ -1,0 +1,8 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Herramienta: antorcha/utensilio de exploración. -->
+  <rect x="14" y="12" width="4" height="18" rx="2" fill="#6b4423" stroke="#3a2412" stroke-width="1.3"/>
+  <ellipse cx="16" cy="12" rx="5" ry="3" fill="#7a2e12"/>
+  <path d="M16 2 Q23 9 16 14 Q9 9 16 2 Z" fill="#f2a33a"/>
+  <path d="M16 5 Q20 9 16 13 Q12 9 16 5 Z" fill="#ffe07a"/>
+  <circle cx="16" cy="6" r="1.3" fill="#fff4c2"/>
+</svg>
