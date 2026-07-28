@@ -45,11 +45,20 @@ Cambios grandes vienen de hitos (misiones, eventos), no de cada venta suelta.
 | Afinidad Artesanos ↑ | Estaciones y técnicas de fabricación |
 | Afinidad Buhoneros ↑ | Materiales exóticos de contrabando |
 
-## 5. Tensiones de facción 🟡
+## 5. Tensiones de facción 🟢 (cerrado en Fase 2)
 
-Algunas facciones están **en tensión** (p. ej. Corona vs. Buhoneros): ganar mucho
-con una puede irritar a otra. Esto crea decisiones estratégicas de con quién
-alinearse, sin obligar a ello. 🔴 Definir qué pares están enfrentados en Fase 2.
+Algunas facciones están **en tensión**: ganar mucho con una resta **levemente** a su
+rival. Crea decisiones estratégicas sin obligar a elegir bando; el roce es **suave y
+nunca bloqueante**. Detalle narrativo en [WorldBible](../WorldBible.md#5-tensiones-entre-facciones).
+
+| Par enfrentado | Motivo |
+|----------------|--------|
+| **La Corona ⚔ Los Buhoneros** | Ley vs. contrabando (eje "legalidad") |
+| **Círculo Arcano ⚔ La Corona** | Magia libre vs. control estatal |
+| **Gremio ⚔ Liga de Artesanos** | Rivalidad amistosa: usar vs. fabricar el equipo |
+
+**Neutrales:** el **Pueblo llano** no está enfrentado con nadie. Los pesos concretos
+del roce viven en `ReputationConfig` (calibrar en Fase 3+).
 
 ## 6. Modelo de clases
 
@@ -71,5 +80,5 @@ en deltas; no conoce la UI.
 
 ## 8. Preguntas abiertas
 
-- 🔴 Pares de facciones enfrentadas y magnitud de la tensión.
+- 🟢 *(cerrada en Fase 2)* Pares enfrentados definidos (§5); magnitud "suave" en `ReputationConfig`.
 - 🟡 Fórmula exacta de conversión venta→reputación (calibrar con Economy en Fase 3).

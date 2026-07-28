@@ -24,9 +24,9 @@ Estamos en **desarrollo por fases**. No se avanza de fase hasta cerrar la anteri
 
 | Fase | Nombre | Estado |
 |------|--------|--------|
-| 1 | Arquitectura completa | 🟡 En curso (este commit) |
-| 2 | Diseño del mundo | ⬜ Pendiente |
-| 3 | Sistema de economía | ⬜ Pendiente |
+| 1 | Arquitectura completa | ✅ Completada |
+| 2 | Diseño del mundo | ✅ Completada |
+| 3 | Sistema de economía | ⬜ Pendiente (próxima: primer código) |
 | 4 | Clientes | ⬜ Pendiente |
 | 5 | Objetos | ⬜ Pendiente |
 | 6 | Fabricación | ⬜ Pendiente |
@@ -34,8 +34,8 @@ Estamos en **desarrollo por fases**. No se avanza de fase hasta cerrar la anteri
 | 8 | Guardado | ⬜ Pendiente |
 | 9 | Pulido | ⬜ Pendiente |
 
-> **Fase 1 = documentación + esqueleto de carpetas + convenciones.**
-> Todavía **no** se escribe lógica de juego. Ver `docs/Roadmap.md`.
+> **Fases 1–2 = documentación + esqueleto de carpetas + biblia de mundo.**
+> Todavía **no** se escribe lógica de juego (empieza en Fase 3). Ver `docs/Roadmap.md`.
 
 ---
 

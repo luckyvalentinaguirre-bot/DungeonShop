@@ -17,7 +17,8 @@ Lee en este orden si eres nuevo en el proyecto:
 | Documento | Qué cubre |
 |-----------|-----------|
 | [GameDesignDocument.md](GameDesignDocument.md) | Visión, pilares, bucle central, público objetivo, alcance |
-| [Lore.md](Lore.md) | Historia del mundo, geografía, facciones, tono |
+| [Lore.md](Lore.md) | Resumen de historia, geografía, facciones y tono (decisiones cerradas) |
+| [WorldBible.md](WorldBible.md) | **Biblia de mundo (Fase 2):** timeline, mapa, facciones, tensiones, cultura, calendario, arco de la abuela |
 | [Economy.md](Economy.md) | Resumen económico de alto nivel (números, monedas) |
 | [Items.md](Items.md) | Catálogo y taxonomía de objetos |
 | [NPCs.md](NPCs.md) | Elenco de personajes (clientes, héroes, vecinos) |

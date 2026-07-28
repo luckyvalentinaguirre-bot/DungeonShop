@@ -6,7 +6,7 @@
 
 ---
 
-## Fase 1 — Arquitectura completa 🟡 (en curso)
+## Fase 1 — Arquitectura completa ✅ (completada)
 
 **Objetivo:** dejar todo el diseño y la estructura listos antes de programar.
 
@@ -28,14 +28,21 @@ sistema de juego implementado todavía.
 
 ---
 
-## Fase 2 — Diseño del mundo
+## Fase 2 — Diseño del mundo ✅ (completada)
 
 **Objetivo:** cerrar el contenido narrativo y de mundo.
-- Cerrar preguntas 🔴 de [Lore](Lore.md) (antecesor, peso narrativo, nombres).
-- Definir facciones enfrentadas ([Reputation](systems/04_Reputation.md)).
-- Elenco definitivo de NPCs con arcos ([NPCs](NPCs.md)).
-- Mapa del reino y orden de desbloqueo de localizaciones.
-- **DoD:** biblia de mundo/narrativa aprobada; sin 🔴 críticos de mundo.
+- [x] Cerrar preguntas 🔴 de [Lore](Lore.md): antecesor = **abuela Rilda Yunque**
+      (maestra artesana desaparecida en las Grietas); peso narrativo = **sandbox con
+      hilo opcional**; nombres firmes (Válderin / Rincón de Yunque / familia Yunque).
+- [x] Facciones enfrentadas definidas ([Reputation](systems/04_Reputation.md) §5):
+      Corona⚔Buhoneros, Arcano⚔Corona, Gremio⚔Artesanos (roce suave).
+- [x] Elenco definitivo de NPCs con arcos, héroes y caras de facción ([NPCs](NPCs.md)).
+- [x] Mapa del reino, atmósfera y orden de desbloqueo de localizaciones
+      ([WorldBible](WorldBible.md)).
+- [x] **Biblia de mundo** completa: historia/timeline, cultura, calendario y
+      estructura del arco opcional de la abuela ([WorldBible.md](WorldBible.md)).
+- **DoD:** ✅ biblia de mundo/narrativa aprobada; sin 🔴 críticos de mundo (solo
+  quedan 🔴 de dosificación del misterio, reservados a Fase 7/9 por diseño).
 
 ---
 
