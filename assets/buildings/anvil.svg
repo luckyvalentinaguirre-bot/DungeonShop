@@ -1,0 +1,18 @@
+<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <!-- Yunque de la forja (vista casi cenital). -->
+  <ellipse cx="24" cy="42" rx="16" ry="4" fill="#000000" opacity="0.22"/>
+  <!-- base -->
+  <path d="M18 34 h12 l2 8 h-16 z" fill="#4a4a52" stroke="#232329" stroke-width="2"/>
+  <!-- cuerpo -->
+  <path d="M10 20 q14 -6 28 0 l-4 8 h-20 z" fill="#6b6b76" stroke="#232329" stroke-width="2"/>
+  <!-- cuerno -->
+  <path d="M38 20 q8 0 8 5 q-6 -2 -10 0 z" fill="#5a5a64" stroke="#232329" stroke-width="1.6"/>
+  <!-- superficie de trabajo con brillo -->
+  <rect x="12" y="18" width="24" height="4" rx="2" fill="#8a8a96"/>
+  <!-- chispas -->
+  <g fill="#ffca4a">
+    <circle cx="22" cy="16" r="1.4"/>
+    <circle cx="28" cy="14" r="1.1"/>
+    <circle cx="25" cy="12" r="0.9"/>
+  </g>
+</svg>

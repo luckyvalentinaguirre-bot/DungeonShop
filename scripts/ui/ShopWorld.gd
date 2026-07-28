@@ -28,6 +28,8 @@ var _lightning_timer: float = 6.0
 var _flash: float = 0.0
 ## Texturas (sprites SVG). key -> Texture2D.
 var _tex: Dictionary = {}
+## Luces dinámicas (antorchas, forja).
+var _lights: Array = []
 
 func _ready() -> void:
 	if GameState.economy == null:
@@ -35,6 +37,7 @@ func _ready() -> void:
 	_load_textures()
 	_assignable_ids = _build_assignable_ids()
 	_build_camera()
+	_build_lights()
 	_build_ambient()
 	_build_forge_smoke()
 	_build_weather_nodes()
@@ -51,9 +54,18 @@ func _process(delta: float) -> void:
 	_time_accum += delta
 	_update_wanderers(delta)
 	_update_lightning(delta)
+	_update_lights()
 	# Parpadeo de antorchas, movimiento de clientes, relámpagos: redibuja cada frame.
 	queue_redraw()
 	_refresh_info()
+
+## Las luces parpadean y brillan más cuanto más oscuro está (noche).
+func _update_lights() -> void:
+	var night := 1.0 - GameState.clock.daylight()
+	var flicker := 0.85 + 0.15 * sin(_time_accum * 9.0)
+	var energy := (0.35 + 1.15 * night) * flicker
+	for light in _lights:
+		light.energy = energy
 
 # ------------------------------------------------------------------- construcción
 func _grid_size() -> Vector2:
@@ -72,6 +84,42 @@ func _build_camera() -> void:
 	cam.zoom = Vector2(zoom_factor, zoom_factor)
 	add_child(cam)
 	cam.make_current()
+
+func _build_lights() -> void:
+	var light_tex := _make_light_texture()
+	var grid := _grid_size()
+	# Antorchas (esquinas superiores) y forja (mostrador).
+	var spots := [
+		Vector2(TILE * 0.5, TILE * 0.3),
+		Vector2(grid.x - TILE * 0.5, TILE * 0.3),
+	]
+	var forge := _first_furniture(ShopLayout.Furniture.COUNTER)
+	if forge != Vector2(-1, -1):
+		spots.append(Vector2(forge.x * TILE + TILE / 2.0, forge.y * TILE + TILE / 2.0))
+	for spot in spots:
+		var light := PointLight2D.new()
+		light.texture = light_tex
+		light.color = Color(1.0, 0.78, 0.42)
+		light.energy = 0.8
+		light.texture_scale = 1.6
+		light.position = spot
+		add_child(light)
+		_lights.append(light)
+
+## Genera por código una textura radial (blanca al centro, transparente al borde)
+## para las luces, sin necesidad de un asset.
+func _make_light_texture() -> Texture2D:
+	var grad := Gradient.new()
+	grad.set_color(0, Color(1, 1, 1, 1))
+	grad.set_color(1, Color(1, 1, 1, 0))
+	var tex := GradientTexture2D.new()
+	tex.gradient = grad
+	tex.width = 256
+	tex.height = 256
+	tex.fill = GradientTexture2D.FILL_RADIAL
+	tex.fill_from = Vector2(0.5, 0.5)
+	tex.fill_to = Vector2(1.0, 0.5)
+	return tex
 
 func _build_ambient() -> void:
 	# Polvo cálido flotando suavemente sobre la tienda.
@@ -291,6 +339,7 @@ func _load_textures() -> void:
 		"barrel": _load_tex("res://assets/buildings/barrel.svg"),
 		"rug": _load_tex("res://assets/buildings/rug.svg"),
 		"torch": _load_tex("res://assets/buildings/torch.svg"),
+		"anvil": _load_tex("res://assets/buildings/anvil.svg"),
 		"potion": _load_tex("res://assets/items/icon_potion.svg"),
 		"sword": _load_tex("res://assets/items/icon_sword.svg"),
 		"armor": _load_tex("res://assets/items/icon_armor.svg"),
@@ -313,6 +362,7 @@ func _draw() -> void:
 		for x in layout.width:
 			_draw_floor(x, y, polish)
 	_draw_walls()
+	_draw_entrance_rug()
 	# Muebles encima del suelo.
 	for y in layout.height:
 		for x in layout.width:
@@ -323,6 +373,7 @@ func _draw() -> void:
 					_draw_shelf(x, y)
 				ShopLayout.Furniture.DECOR:
 					_draw_decor(x, y)
+	_draw_forge_anvil()
 	_draw_wanderers()
 	_draw_torches()
 	# Destello de relámpago (tormenta).
@@ -391,6 +442,25 @@ func _draw_wanderers() -> void:
 		else:
 			var color: Color = w.get("color", Color(0.8, 0.5, 0.4))
 			draw_circle(pos + Vector2(0, bob), 9.0, color)
+
+func _draw_entrance_rug() -> void:
+	var tex: Texture2D = _tex.get("rug")
+	if tex == null:
+		return
+	var ex := int(GameState.layout.width / 2)
+	var ey := GameState.layout.height - 1
+	if GameState.layout.furniture_at(ex, ey) == ShopLayout.Furniture.NONE:
+		draw_texture_rect(tex, _tile_rect(ex, ey), false)
+
+func _draw_forge_anvil() -> void:
+	var tex: Texture2D = _tex.get("anvil")
+	if tex == null:
+		return
+	var forge := _first_furniture(ShopLayout.Furniture.COUNTER)
+	if forge == Vector2(-1, -1):
+		return
+	var c := _tile_rect(int(forge.x), int(forge.y)).get_center()
+	draw_texture_rect(tex, Rect2(c - Vector2(20, 22), Vector2(40, 40)), false)
 
 func _draw_walls() -> void:
 	var tex: Texture2D = _tex.get("wall")
