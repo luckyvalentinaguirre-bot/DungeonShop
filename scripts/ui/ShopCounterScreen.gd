@@ -8,7 +8,6 @@ extends Control
 ## (CanvasModulate) sin oscurecer la UI (va en una CanvasLayer aparte).
 
 var _canvas_modulate: CanvasModulate
-var _character: CharacterView
 var _gold_label: Label
 var _day_label: Label
 var _prestige_label: Label      # "Reputación: Nivel N"
@@ -23,7 +22,6 @@ var _serve_panel: Panel         # burbuja de atención (aparece con cliente)
 var _atender_btn: Button
 var _ui_layer: CanvasLayer       # capa de HUD (para popups por encima)
 var _log: RichTextLabel
-var _tex: Dictionary = {}
 
 # Paleta pergamino/madera del mockup.
 const COL_PARCH := Color("e6d2a6")
@@ -44,7 +42,6 @@ func _ready() -> void:
 		GameState.new_game()
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_vp = get_viewport_rect().size
-	_load_textures()
 	_build_scene()
 	_build_ui()
 	_connect_signals()
@@ -54,105 +51,26 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	GameState.clock.advance(delta)
 	_canvas_modulate.color = GameState.clock.light_color()
-	queue_redraw()
 
 # ------------------------------------------------------------------- escena/fondo
-func _load_textures() -> void:
-	_tex = {
-		"shelf": _load_tex("res://assets/buildings/shelf.svg"),
-		"potion": _load_tex("res://assets/items/icon_potion.svg"),
-		"sword": _load_tex("res://assets/items/icon_sword.svg"),
-		"armor": _load_tex("res://assets/items/icon_armor.svg"),
-		"tool": _load_tex("res://assets/items/icon_tool.svg"),
-		"material": _load_tex("res://assets/items/icon_material.svg"),
-		"magic": _load_tex("res://assets/items/icon_magic.svg"),
-	}
-
-func _load_tex(path: String) -> Texture2D:
-	return load(path) if ResourceLoader.exists(path) else null
+## Usa la ILUSTRACIÓN del diseñador (assets/ui/shop_counter_art.png) como fondo de
+## la tienda a pantalla completa; el día/noche la tiñe (CanvasModulate) y la UI va
+## en una CanvasLayer aparte para no oscurecerse. Sustituye por una versión en alta
+## resolución en la misma ruta cuando esté disponible.
+const SHOP_ART := "res://assets/ui/shop_counter_art.png"
 
 func _build_scene() -> void:
 	_canvas_modulate = CanvasModulate.new()
 	_canvas_modulate.color = GameState.clock.light_color()
 	add_child(_canvas_modulate)
 
-	# Cliente frente al mostrador (queda detrás de la barra del mostrador).
-	_character = CharacterView.new()
-	_character.custom_minimum_size = Vector2(220, 280)
-	_character.position = Vector2(_vp.x * 0.5 - 110, _vp.y * 0.24)
-	_character.size = Vector2(220, 280)
-	add_child(_character)
-
-	# Mostrador en primer plano (barra de madera abajo).
-	var counter := Panel.new()
-	counter.position = Vector2(0, _vp.y * 0.60)
-	counter.size = Vector2(_vp.x, _vp.y * 0.24)
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.45, 0.28, 0.14)
-	sb.border_color = Color(0.30, 0.18, 0.08)
-	sb.set_border_width_all(0)
-	sb.border_width_top = 6
-	sb.corner_radius_top_left = 14
-	sb.corner_radius_top_right = 14
-	counter.add_theme_stylebox_override("panel", sb)
-	add_child(counter)
-	# Franja pulida del borde del mostrador.
-	var edge := ColorRect.new()
-	edge.color = Color(0.62, 0.42, 0.22)
-	edge.position = Vector2(0, _vp.y * 0.60)
-	edge.size = Vector2(_vp.x, 12)
-	add_child(edge)
-
-func _draw() -> void:
-	var w := size.x
-	var h := size.y
-	# Pared del fondo (cálida).
-	draw_rect(Rect2(0, 0, w, h * 0.62), Color(0.36, 0.26, 0.18), true)
-	# Suelo.
-	draw_rect(Rect2(0, h * 0.62, w, h * 0.38), Color(0.30, 0.20, 0.11), true)
-	# Rodapié.
-	draw_rect(Rect2(0, h * 0.60, w, 6), Color(0.22, 0.14, 0.08), true)
-	# Ventana (con cielo según la hora).
-	var sky := GameState.clock.light_color()
-	draw_rect(Rect2(w * 0.06, h * 0.12, w * 0.16, h * 0.22), sky, true)
-	draw_rect(Rect2(w * 0.06, h * 0.12, w * 0.16, h * 0.22), Color(0.20, 0.13, 0.07), false, 6.0)
-	draw_line(Vector2(w * 0.14, h * 0.12), Vector2(w * 0.14, h * 0.34), Color(0.20, 0.13, 0.07), 4.0)
-	draw_line(Vector2(w * 0.06, h * 0.23), Vector2(w * 0.22, h * 0.23), Color(0.20, 0.13, 0.07), 4.0)
-	# Estanterías del fondo con producto.
-	var shelf: Texture2D = _tex.get("shelf")
-	var cats := [GameEnums.Category.POTION, GameEnums.Category.WEAPON, GameEnums.Category.ARMOR, GameEnums.Category.TOOL, GameEnums.Category.MAGIC]
-	for i in 5:
-		var sx := w * (0.30 + i * 0.13)
-		var sy := h * 0.14
-		var srect := Rect2(sx, sy, w * 0.11, h * 0.20)
-		if shelf != null:
-			draw_texture_rect(shelf, srect, false)
-		else:
-			draw_rect(srect, Color(0.30, 0.20, 0.12), true)
-		var icon := _category_icon(cats[i])
-		if icon != null:
-			var ic := srect.get_center()
-			draw_texture_rect(icon, Rect2(ic - Vector2(18, 20), Vector2(36, 36)), false)
-	# Puerta a la derecha.
-	draw_rect(Rect2(w * 0.86, h * 0.20, w * 0.10, h * 0.40), Color(0.32, 0.20, 0.10), true)
-	draw_rect(Rect2(w * 0.86, h * 0.20, w * 0.10, h * 0.40), Color(0.20, 0.13, 0.07), false, 5.0)
-	draw_circle(Vector2(w * 0.875, h * 0.40), 4.0, Color(0.85, 0.7, 0.35))
-	# Cartel colgante.
-	draw_rect(Rect2(w * 0.42, h * 0.03, w * 0.16, h * 0.07), Color(0.5, 0.32, 0.16), true)
-	draw_rect(Rect2(w * 0.42, h * 0.03, w * 0.16, h * 0.07), Color(0.85, 0.65, 0.32), false, 3.0)
-	var font := ThemeDB.fallback_font
-	if font != null:
-		draw_string(font, Vector2(w * 0.44, h * 0.08), "YUNQUE", HORIZONTAL_ALIGNMENT_LEFT, w * 0.14, 22, Color(0.95, 0.85, 0.6))
-
-func _category_icon(category: int) -> Texture2D:
-	match category:
-		GameEnums.Category.WEAPON: return _tex.get("sword")
-		GameEnums.Category.ARMOR: return _tex.get("armor")
-		GameEnums.Category.POTION: return _tex.get("potion")
-		GameEnums.Category.TOOL: return _tex.get("tool")
-		GameEnums.Category.MAGIC: return _tex.get("magic")
-		GameEnums.Category.MATERIAL: return _tex.get("material")
-		_: return null
+	var art := TextureRect.new()
+	art.texture = load(SHOP_ART)
+	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	art.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	art.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(art)
 
 # ------------------------------------------------------------------- UI (overlay)
 ## Reconstruye el HUD según el mockup: pergamino de stats arriba-izquierda,
@@ -370,7 +288,6 @@ func _on_next_customer() -> void:
 		_current = customer
 		_controller = CustomerController.new(customer)
 		_controller.present_need()
-		_character.show_character(_sprite_for(customer))
 		_show_need()
 		_serve_panel.visible = true
 		_log_line("Llega [b]%s[/b] al mostrador." % customer.display_name())
@@ -424,7 +341,6 @@ func _buy_material(mat_id: StringName) -> void:
 		_log_line("[color=#d98f6a]No te alcanza el oro para %s.[/color]" % mat_name)
 
 func _resolve_shelf(customer: Customer) -> void:
-	_character.show_character(_sprite_for(customer))
 	var offers := _offers_from_stock()
 	var result := ShelfPurchaseResolver.resolve(customer.need, offers, customer.wallet, GameState.player_wallet, GameState.economy.demand)
 	if result.bought:
@@ -432,11 +348,9 @@ func _resolve_shelf(customer: Customer) -> void:
 		GameState.record_sale_reputation(customer)
 		GameState.notify_sale(result.price)
 		_log_line("[color=#8fd08a]%s cogió %s de la estantería (%d coronas).[/color]" % [customer.display_name(), result.item.data.display_name, result.price])
-		_character.play_happy()
 		_refresh_stock()
 	else:
 		_log_line("%s miró y se fue sin comprar." % customer.display_name())
-		_character.play_sad()
 	_refresh_hud()
 
 func _offers_from_stock() -> Array:
@@ -471,14 +385,12 @@ func _on_offer() -> void:
 		GameState.record_sale_reputation(_current)
 		GameState.notify_sale(_offer_price)
 		_log_line("[color=#8fd08a]Vendiste %s por %d coronas.[/color]" % [_selected_slot.data.display_name, _offer_price])
-		_character.play_happy()
 		_refresh_hud()
 		_end_visit()
 	elif result.reason == "wrong_item":
 		_log_line("A %s no le sirve eso (quería %s)." % [_current.display_name(), _cat_name(_current.need.category)])
 	else:
 		_log_line("[color=#d98f6a]%s rechazó la oferta. Se marcha.[/color]" % _current.display_name())
-		_character.play_sad()
 		_end_visit()
 
 func _end_visit() -> void:
@@ -535,16 +447,6 @@ func _update_offer_labels() -> void:
 func _log_line(text: String) -> void:
 	if _log != null:
 		_log.append_text(text + "\n")
-
-func _sprite_for(customer: Customer) -> String:
-	var base := "res://assets/characters/"
-	match customer.data.faction:
-		GameEnums.Faction.CROWN, GameEnums.Faction.GUILD:
-			return base + "customer_knight.svg"
-		GameEnums.Faction.ARCANE:
-			return base + "customer_mage.svg"
-		_:
-			return base + "customer_villager.svg"
 
 func _cat_name(category: int) -> String:
 	match category:
