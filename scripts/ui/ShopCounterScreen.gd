@@ -8,6 +8,7 @@ extends Control
 ## (CanvasModulate) sin oscurecer la UI (va en una CanvasLayer aparte).
 
 var _canvas_modulate: CanvasModulate
+var _character: CharacterView   # cliente 2D animado (capa sobre el fondo)
 var _gold_label: Label
 var _day_label: Label
 var _prestige_label: Label      # "Reputación: Nivel N"
@@ -71,6 +72,27 @@ func _build_scene() -> void:
 	art.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(art)
+
+	# Capa de cliente 2D animado (sobre el fondo, debajo del HUD).
+	_character = CharacterView.new()
+	_character.size = Vector2(280, 340)
+	_character.custom_minimum_size = Vector2(280, 340)
+	_character.position = _counter_pos()
+	add_child(_character)
+
+## Posiciones del cliente: donde se planta (mostrador) y por donde entra (puerta).
+func _counter_pos() -> Vector2:
+	return Vector2(_vp.x * 0.5 - 140, _vp.y * 0.30)
+
+func _door_pos() -> Vector2:
+	return Vector2(_vp.x * 0.80 - 140, _vp.y * 0.30)
+
+## Hace entrar al cliente desde la puerta hasta el mostrador, con su animación.
+func _present_customer(customer: Customer) -> void:
+	_character.position = _door_pos()
+	_character.show_character(_sprite_for(customer))
+	var t := create_tween()
+	t.tween_property(_character, "position", _counter_pos(), 0.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
 # ------------------------------------------------------------------- UI (overlay)
 ## Reconstruye el HUD según el mockup: pergamino de stats arriba-izquierda,
@@ -288,6 +310,7 @@ func _on_next_customer() -> void:
 		_current = customer
 		_controller = CustomerController.new(customer)
 		_controller.present_need()
+		_present_customer(customer)
 		_show_need()
 		_serve_panel.visible = true
 		_log_line("Llega [b]%s[/b] al mostrador." % customer.display_name())
@@ -342,16 +365,28 @@ func _buy_material(mat_id: StringName) -> void:
 
 func _resolve_shelf(customer: Customer) -> void:
 	var offers := _offers_from_stock()
+	_present_customer(customer)
 	var result := ShelfPurchaseResolver.resolve(customer.need, offers, customer.wallet, GameState.player_wallet, GameState.economy.demand)
 	if result.bought:
 		GameState.stock.remove(result.item.data.id, 1)
 		GameState.record_sale_reputation(customer)
 		GameState.notify_sale(result.price)
 		_log_line("[color=#8fd08a]%s cogió %s de la estantería (%d coronas).[/color]" % [customer.display_name(), result.item.data.display_name, result.price])
+		_character.play_happy()
 		_refresh_stock()
 	else:
 		_log_line("%s miró y se fue sin comprar." % customer.display_name())
+		_character.play_sad()
 	_refresh_hud()
+	_dismiss_after(1.5)
+
+## Oculta al cliente tras t segundos (si no hay ninguno atendiéndose).
+func _dismiss_after(t: float) -> void:
+	var tw := create_tween()
+	tw.tween_interval(t)
+	tw.tween_callback(func() -> void:
+		if _current == null:
+			_character.hide_character())
 
 func _offers_from_stock() -> Array:
 	var offers: Array = []
@@ -385,12 +420,14 @@ func _on_offer() -> void:
 		GameState.record_sale_reputation(_current)
 		GameState.notify_sale(_offer_price)
 		_log_line("[color=#8fd08a]Vendiste %s por %d coronas.[/color]" % [_selected_slot.data.display_name, _offer_price])
+		_character.play_happy()
 		_refresh_hud()
 		_end_visit()
 	elif result.reason == "wrong_item":
 		_log_line("A %s no le sirve eso (quería %s)." % [_current.display_name(), _cat_name(_current.need.category)])
 	else:
 		_log_line("[color=#d98f6a]%s rechazó la oferta. Se marcha.[/color]" % _current.display_name())
+		_character.play_sad()
 		_end_visit()
 
 func _end_visit() -> void:
@@ -402,6 +439,7 @@ func _end_visit() -> void:
 	_selected_label.text = "Producto: (ninguno)"
 	_price_label.text = "Precio: 0"
 	_refresh_stock()
+	_dismiss_after(0.8)   # deja ver el gesto y luego el cliente se va
 
 func _on_save() -> void:
 	if SaveManager.save_game(1):
@@ -447,6 +485,16 @@ func _update_offer_labels() -> void:
 func _log_line(text: String) -> void:
 	if _log != null:
 		_log.append_text(text + "\n")
+
+func _sprite_for(customer: Customer) -> String:
+	var base := "res://assets/characters/"
+	match customer.data.faction:
+		GameEnums.Faction.CROWN, GameEnums.Faction.GUILD:
+			return base + "customer_knight.svg"
+		GameEnums.Faction.ARCANE:
+			return base + "customer_mage.svg"
+		_:
+			return base + "customer_villager.svg"
 
 func _cat_name(category: int) -> String:
 	match category:
