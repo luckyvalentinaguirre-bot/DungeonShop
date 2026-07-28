@@ -24,7 +24,7 @@ const _WEIGHTS := {
 ## Estación correspondiente a una jornada dada.
 func season_for_day(day: int) -> Season:
 	var index: int = int(floor(float(maxi(1, day) - 1) / float(maxi(1, days_per_season)))) % 4
-	return index as Season
+	return _season_from_index(index)
 
 ## Recalcula estación y clima para una jornada (llamar al avanzar la jornada).
 func roll_for_day(day: int, rng: RandomNumberGenerator) -> void:
@@ -42,8 +42,17 @@ func _weighted_pick(weights: Array, rng: RandomNumberGenerator) -> Weather:
 	for i in weights.size():
 		acc += int(weights[i])
 		if roll <= acc:
-			return i as Weather
+			return _weather_from_index(i)
 	return Weather.CLEAR
+
+func _weather_from_index(i: int) -> Weather:
+	match i:
+		1: return Weather.CLOUDY
+		2: return Weather.RAIN
+		3: return Weather.STORM
+		4: return Weather.SNOW
+		5: return Weather.FOG
+		_: return Weather.CLEAR
 
 func weather_name() -> String:
 	match weather:
@@ -70,5 +79,12 @@ func capture_state() -> Dictionary:
 	return {"weather": int(weather), "season": int(season)}
 
 func restore_state(data: Dictionary) -> void:
-	weather = int(data.get("weather", 0)) as Weather
-	season = int(data.get("season", 0)) as Season
+	weather = _weather_from_index(int(data.get("weather", 0)))
+	season = _season_from_index(int(data.get("season", 0)))
+
+func _season_from_index(i: int) -> Season:
+	match i:
+		1: return Season.SUMMER
+		2: return Season.AUTUMN
+		3: return Season.WINTER
+		_: return Season.SPRING

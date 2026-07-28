@@ -70,7 +70,8 @@ func capture_state() -> Dictionary:
 func restore_state(data: Dictionary) -> void:
 	width = int(data.get("w", 8))
 	height = int(data.get("h", 6))
-	_tiles = (data.get("tiles", []) as Array).duplicate()
+	var tiles = data.get("tiles", [])
+	_tiles = tiles.duplicate() if tiles is Array else []
 	_assignments.clear()
 	var assigns = data.get("assign", {})
 	if assigns is Dictionary:

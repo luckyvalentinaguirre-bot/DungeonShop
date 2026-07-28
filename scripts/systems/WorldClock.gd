@@ -68,8 +68,11 @@ func light_color() -> Color:
 		var tb: float = b[0]
 		if t >= ta and t <= tb:
 			var f: float = 0.0 if tb == ta else (t - ta) / (tb - ta)
-			return (a[1] as Color).lerp(b[1] as Color, f)
-	return _KEYS[0][1]
+			var ca: Color = a[1]
+			var cb: Color = b[1]
+			return ca.lerp(cb, f)
+	var first: Color = _KEYS[0][1]
+	return first
 
 ## Serialización (parte del guardado; el reloj persiste entre sesiones).
 func capture_state() -> Dictionary:
