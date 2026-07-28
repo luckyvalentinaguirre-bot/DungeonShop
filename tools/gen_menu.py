@@ -51,6 +51,10 @@ def potion(d,x,y,r):
 def helmet(d,x,y):
     d.pieslice([x,y,x+12,y+14],180,360,fill=METAL[1]); d.pieslice([x+1,y+1,x+11,y+13],180,360,fill=METAL[2])
     F(d,x,y+7,13,3,METAL[1]); F(d,x+3,y+8,7,2,K); F(d,x+5,y,3,4,METAL[3])
+def ore(d,x,y,c):
+    d.polygon([(x,y+8),(x+4,y+2),(x+9,y+3),(x+12,y+9),(x+7,y+13),(x+2,y+12)],fill=c); d.polygon([(x+4,y+2),(x+7,y+7),(x+2,y+8)],fill=METAL[3])
+def ring(d,x,y):
+    d.ellipse([x,y+3,x+7,y+10],outline=GOLD[2]); d.ellipse([x+1,y+4,x+6,y+9],outline=GOLD[1]); F(d,x+2,y,3,3,(79,208,200))
 def barrel(d,x,y,w,h):
     panel(d,x,y,w,h,[(56,36,20),(94,60,32),(128,84,46)])
     F(d,x,y+2,w,3,METAL[1]); F(d,x,y+h-6,w,3,METAL[1])
@@ -152,13 +156,15 @@ def scene():
     bx=dx+dw//2; F(d,bx-1,dy-26,2,6,DWOOD[0]); d.pieslice([bx-6,dy-23,bx+6,dy-12],180,360,fill=GOLD[1]); F(d,bx-6,dy-13,12,2,GOLD[2])
     for wx in (30,384):
         panel(d,wx-5,25,66,42,DWOOD); exterior(d,img,wx,30,56,32); d=ImageDraw.Draw(img); panel(d,wx-8,68,72,6,DWOOD,ao=False)
-    for sy in (44,64):
-        panel(d,10,sy,64,4,[(58,38,20),(92,60,30),(124,84,44)],ao=False); F(d,10,sy+4,64,2,DWOOD[0])
-    for i,px in enumerate((14,24,34,44)): potion(d,px,36,[BLUE,GRN][i%2])
-    helmet(d,56,34)
-    for i,bx2 in enumerate((14,18,22,26,30,34,38,42)): F(d,bx2,57,3,7,[REDB,(40,130,66),BLUEB,(150,120,60)][i%4])
-    portrait(d,14,82)          # retrato de la abuela (pared inferior izq, sin solapes)
-    clock(d,384,82)            # reloj parado (pared, junto a la chimenea, sin tocar la ventana)
+    # Estanterias DEBAJO de la ventana izquierda (sin solaparla), bien surtidas.
+    for sy in (86,106):
+        panel(d,14,sy,80,4,[(58,38,20),(92,60,30),(124,84,44)],ao=False); F(d,14,sy+4,80,2,DWOOD[0])
+    for i,px in enumerate((18,28,38,48)): potion(d,px,75,[BLUE,GRN][i%2])
+    helmet(d,60,72); ore(d,78,74,GOLD[2])
+    for i,bx2 in enumerate((18,22,26,30,34,38,42,46,50,54)): F(d,bx2,98,3,7,[REDB,(40,130,66),BLUEB,(150,120,60)][i%4])
+    ring(d,68,99)
+    portrait(d,136,44)         # retrato de la abuela (zona libre a la izq de la puerta)
+    clock(d,384,82)            # reloj parado (junto a la chimenea, sin tocar la ventana)
     for wx in (300,312): F(d,wx,44,3,22,METAL[1]); F(d,wx-3,64,9,3,GOLD[2])
     fx,fy,fw,fh=406,120,70,150
     panel(d,fx,fy-46,fw,fh,STONE)
