@@ -174,13 +174,29 @@ tienda donde aplica), según la [Visión del juego](GameVision.md):
       investigación (`ResearchSystem`), decoración (`DecorationData`).
 - [x] ~35 archivos de tests en total.
 
-**Pendiente — capa VISUAL (siguiente gran bloque):**
-- [ ] Render de la tienda en **vista cenital (top-down)** desde `ShopLayout`.
+**Incremento 5 — Base VISUAL top-down ✅**
+- [x] **Vista cenital (top-down)** de la tienda renderizada desde `ShopLayout`
+      (`scenes/shop/ShopWorld.tscn`): suelo, paredes, mostrador, estantes con su
+      producto, decoración. Cámara cenital fija.
+- [x] **Ciclo día/noche** (`WorldClock` + `CanvasModulate`) con color de luz interpolado.
+- [x] **Clima y estaciones** (`WeatherSystem`): lluvia/tormenta/nieve/niebla con
+      partículas + niebla translúcida + relámpagos; probabilidades por estación.
+- [x] **Vida ambiental:** polvo, humo de la forja, antorchas con parpadeo e
+      iluminación nocturna, clientes que deambulan.
+- [x] La tienda **evoluciona de aspecto** con el prestigio.
+- [x] **Colocar** muebles y **asignar** qué producto va en cada estante (barra de
+      herramientas). Todo el arte es placeholder (formas) sustituible por pixel art HD.
+- Dirección de arte fijada como canon en [ArtDirection.md](ArtDirection.md).
+
+**Pendiente — capa VISUAL (continuación):**
+- [ ] Arte final: tiles/sprites de **pixel art HD** (sustituir placeholders);
+      sprites únicos por objeto; NPCs por profesión; iluminación con `PointLight2D`.
+- [ ] Sets de tiles por rango de tienda (aspecto vieja→enorme).
 - [ ] UIs de mercado, empleados, exploración, investigación, misiones/logros, diálogo.
-- [ ] Inventario con arrastrar-soltar; input map final y mando.
-- [ ] Arte y animación finales (sustituir placeholders).
-- **DoD:** el bucle central ya es jugable con ratón; se amplía con la vista cenital
-  y las pantallas de cada sistema.
+- [ ] Rediseño de UI minimalista; inventario arrastrar-soltar; input map + mando.
+- [ ] Conectar el stock que se vende a los productos asignados en cada estante.
+- **DoD:** el bucle central ya es jugable con ratón y hay vista cenital con mundo
+  vivo; se amplía con arte final y las pantallas de cada sistema.
 
 ### Cómo probarlo (Godot 4.3+)
 Abre el proyecto en el editor y pulsa **F5** (la escena principal es el menú), o:
