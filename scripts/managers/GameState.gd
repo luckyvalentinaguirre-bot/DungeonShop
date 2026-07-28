@@ -26,6 +26,8 @@ var layout: ShopLayout
 var employees: EmployeeManager
 var exploration: ExplorationSystem
 var research: ResearchSystem
+var clock: WorldClock
+var weather: WeatherSystem
 ## Materiales que se pueden comprar en el mercado (ids del catálogo).
 var market_materials: Array = [&"mat_iron", &"mat_steel", &"mat_quicksilver"]
 var player_wallet: WalletComponent
@@ -56,6 +58,8 @@ func new_game() -> void:
 	employees = EmployeeManager.new()
 	exploration = ExplorationSystem.new()
 	research = ResearchSystem.new()
+	clock = WorldClock.new()
+	weather = WeatherSystem.new()
 
 	economy = EconomySystem.new()
 	economy.name = "EconomySystem"
@@ -78,7 +82,9 @@ func new_game() -> void:
 
 	customer_pool = _default_pool()
 	_seed_progression_content()
+	_seed_layout()
 	day = 1
+	weather.roll_for_day(day, rng)
 
 	day_changed.emit(day)
 	gold_changed.emit(player_wallet.balance)
@@ -174,6 +180,8 @@ func advance_day() -> void:
 		if config != null and config.days_per_week > 0 and day % config.days_per_week == 1:
 			economy.market.advance_week()
 			_maybe_trigger_events()
+	if weather != null:
+		weather.roll_for_day(day, rng)
 	day_changed.emit(day)
 	var bus := _bus()
 	if bus != null:
@@ -222,6 +230,8 @@ func capture_state() -> Dictionary:
 		"demand": economy.demand.capture_state(),
 		"stock": stock.capture_state(),
 		"layout": layout.capture_state(),
+		"clock": clock.capture_state(),
+		"weather": weather.capture_state(),
 	}
 
 ## Reconstruye la partida desde un diccionario. Requiere que los servicios ya
@@ -238,6 +248,12 @@ func restore_state(data: Dictionary) -> void:
 	var layout_data = data.get("layout", {})
 	if layout_data is Dictionary and not layout_data.is_empty():
 		layout.restore_state(layout_data)
+	var clock_data = data.get("clock", {})
+	if clock_data is Dictionary and not clock_data.is_empty():
+		clock.restore_state(clock_data)
+	var weather_data = data.get("weather", {})
+	if weather_data is Dictionary and not weather_data.is_empty():
+		weather.restore_state(weather_data)
 	day_changed.emit(day)
 	gold_changed.emit(player_wallet.balance)
 
@@ -313,6 +329,27 @@ func _festival_event() -> EventData:
 	e.weekly_chance = 0.3
 	e.effects = [effect]
 	return e
+
+## Distribución inicial de la tienda (vista cenital): un mostrador y unos estantes
+## con productos asignados. El jugador la reorganiza a su gusto. Ver ShopLayout.
+func _seed_layout() -> void:
+	# Mostrador cerca de la parte inferior-central.
+	layout.place(3, 4, ShopLayout.Furniture.COUNTER)
+	layout.place(4, 4, ShopLayout.Furniture.COUNTER)
+	# Estantes con producto asignado.
+	var shelves := [
+		[1, 1, &"potion_heal"],
+		[2, 1, &"weapon_short_sword"],
+		[5, 1, &"armor_leather"],
+		[6, 1, &"tool_torch"],
+		[1, 2, &"mat_iron"],
+	]
+	for s in shelves:
+		layout.place(s[0], s[1], ShopLayout.Furniture.SHELF)
+		layout.assign(s[0], s[1], s[2])
+	# Un par de decoraciones.
+	layout.place(0, 0, ShopLayout.Furniture.DECOR)
+	layout.place(7, 0, ShopLayout.Furniture.DECOR)
 
 func _stock_initial() -> void:
 	_add_stock(&"potion_heal", 2, 4)

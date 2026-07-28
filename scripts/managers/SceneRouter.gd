@@ -7,6 +7,7 @@ extends Node
 
 const MAIN_MENU := "res://scenes/main_menu/MainMenu.tscn"
 const SHOP := "res://scenes/shop/Shop.tscn"
+const SHOP_WORLD := "res://scenes/shop/ShopWorld.tscn"
 const CRAFTING := "res://scenes/crafting/CraftingScreen.tscn"
 
 func goto(path: String) -> void:
@@ -20,3 +21,6 @@ func goto_main_menu() -> void:
 
 func goto_crafting() -> void:
 	goto(CRAFTING)
+
+func goto_world() -> void:
+	goto(SHOP_WORLD)

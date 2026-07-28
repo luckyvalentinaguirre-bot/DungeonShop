@@ -42,6 +42,8 @@ const TEST_SCRIPTS: Array = [
 	# Expansión: distribución, empleados, exploración, investigación
 	preload("res://tests/unit/test_shop_layout.gd"),
 	preload("res://tests/unit/test_expansion_systems.gd"),
+	# Mundo vivo (día/noche, clima)
+	preload("res://tests/unit/test_world_ambient.gd"),
 ]
 
 func _initialize() -> void:
