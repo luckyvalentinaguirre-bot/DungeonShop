@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="96" viewBox="0 0 48 96">
+  <!-- soporte -->
+  <rect x="22" y="0" width="4" height="20" fill="#3d2a18"/>
+  <path d="M24 18 q18 2 18 16" fill="none" stroke="#3d2a18" stroke-width="4"/>
+  <!-- farol -->
+  <rect x="14" y="30" width="20" height="6" fill="#3d2a18"/>
+  <rect x="14" y="64" width="20" height="6" fill="#3d2a18"/>
+  <rect x="16" y="34" width="16" height="30" fill="#ffca6a" opacity="0.85"/>
+  <rect x="16" y="34" width="16" height="30" fill="none" stroke="#3d2a18" stroke-width="2"/>
+  <line x1="24" y1="34" x2="24" y2="64" stroke="#3d2a18" stroke-width="1.5"/>
+  <circle cx="24" cy="49" r="5" fill="#fff2c0"/>
+</svg>

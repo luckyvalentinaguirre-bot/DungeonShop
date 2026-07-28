@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="120" viewBox="0 0 220 120">
+  <!-- tabla superior -->
+  <rect x="4" y="8" width="212" height="22" rx="4" fill="#8a5c34"/>
+  <rect x="4" y="8" width="212" height="22" rx="4" fill="none" stroke="#3d2a18" stroke-width="2"/>
+  <!-- cuerpo -->
+  <rect x="14" y="28" width="192" height="86" fill="#6b4726"/>
+  <rect x="14" y="28" width="192" height="86" fill="none" stroke="#3d2a18" stroke-width="3"/>
+  <!-- paneles -->
+  <g fill="none" stroke="#4d3520" stroke-width="2">
+    <rect x="28" y="42" width="72" height="60"/>
+    <rect x="120" y="42" width="72" height="60"/>
+  </g>
+  <line x1="14" y1="70" x2="206" y2="70" stroke="#4d3520" stroke-width="1.5"/>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="150" height="180" viewBox="0 0 150 180">
+  <!-- base -->
+  <rect x="10" y="150" width="130" height="26" fill="#6b4726" stroke="#3d2a18" stroke-width="2"/>
+  <!-- vidrio -->
+  <rect x="16" y="20" width="118" height="132" fill="#bcd6e0" opacity="0.35"/>
+  <rect x="16" y="20" width="118" height="132" fill="none" stroke="#caa64a" stroke-width="4"/>
+  <!-- marco dorado -->
+  <rect x="10" y="10" width="130" height="14" fill="#caa64a" stroke="#8a6f28" stroke-width="2"/>
+  <line x1="75" y1="20" x2="75" y2="152" stroke="#caa64a" stroke-width="3"/>
+  <line x1="16" y1="88" x2="134" y2="88" stroke="#caa64a" stroke-width="3"/>
+  <!-- brillo -->
+  <line x1="34" y1="30" x2="52" y2="30" stroke="#ffffff" stroke-width="3" opacity="0.5"/>
+</svg>

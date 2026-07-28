@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="170" viewBox="0 0 120 170">
+  <!-- vano de piedra con vista al exterior -->
+  <path d="M10 170 L10 46 Q10 8 60 8 Q110 8 110 46 L110 170 Z" fill="#6a6058"/>
+  <path d="M20 170 L20 50 Q20 20 60 20 Q100 20 100 50 L100 170 Z" fill="#bcd3e6"/>
+  <path d="M20 170 L20 120 L100 120 L100 170 Z" fill="#9fb28a"/>
+  <!-- hoja de puerta abierta a un lado -->
+  <rect x="6" y="40" width="20" height="128" fill="#5c3f26" stroke="#3d2a18" stroke-width="2"/>
+  <circle cx="22" cy="104" r="2.5" fill="#d8b24a"/>
+  <!-- marco -->
+  <path d="M10 170 L10 46 Q10 8 60 8 Q110 8 110 46 L110 170" fill="none" stroke="#3d2a18" stroke-width="5"/>
+</svg>

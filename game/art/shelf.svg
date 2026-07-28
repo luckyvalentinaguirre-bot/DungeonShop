@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="170" viewBox="0 0 160 170">
+  <!-- estructura -->
+  <rect x="4" y="4" width="152" height="164" fill="#5c3f26"/>
+  <rect x="14" y="14" width="132" height="146" fill="#3f2c1a"/>
+  <!-- laterales -->
+  <rect x="4" y="4" width="12" height="164" fill="#6b4726"/>
+  <rect x="144" y="4" width="12" height="164" fill="#6b4726"/>
+  <!-- baldas (los objetos se posan encima de cada una) -->
+  <rect x="12" y="60" width="136" height="10" fill="#7a5636"/>
+  <rect x="12" y="118" width="136" height="10" fill="#7a5636"/>
+  <rect x="12" y="158" width="136" height="10" fill="#7a5636"/>
+  <!-- borde -->
+  <rect x="4" y="4" width="152" height="164" fill="none" stroke="#2e2012" stroke-width="3"/>
+</svg>
