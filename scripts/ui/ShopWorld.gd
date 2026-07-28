@@ -2,11 +2,11 @@ extends Node2D
 ## Vista CENITAL (top-down) de la tienda. Renderiza la cuadrícula de ShopLayout con
 ## suelo, paredes, mostrador, estantes (con su producto) y decoración; aplica el
 ## ciclo día/noche (CanvasModulate), el clima (partículas de lluvia/nieve + niebla),
-## partículas ambientales (polvo), antorchas con parpadeo y humo de la forja. El
-## jugador coloca muebles y asigna qué producto va en cada estante.
+## partículas ambientales (polvo), antorchas con luz dinámica (PointLight2D) y humo
+## de la forja. El jugador coloca muebles y asigna qué producto va en cada estante.
 ##
-## TODO EL ARTE ES PLACEHOLDER (formas de color): para el pixel art HD final se
-## sustituyen los dibujos por tiles/sprites. Ver docs/ArtDirection.md.
+## El arte son SPRITES SVG propios (estilo cozy ilustrado), en assets/. Para el pixel
+## art HD final se sustituyen esos archivos sin tocar este código. Ver docs/ArtDirection.md.
 
 const TILE := 64
 
