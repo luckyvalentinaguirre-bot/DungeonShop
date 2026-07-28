@@ -44,7 +44,7 @@ def _get(url: str, token: str) -> dict:
         return json.loads(resp.read().decode("utf-8"))
 
 
-def _poll(data: dict, token: str, timeout_s: int = 180) -> dict:
+def _poll(data: dict, token: str, timeout_s: int = 280) -> dict:
     """Espera a que la prediccion llegue a un estado terminal."""
     poll_url = data.get("urls", {}).get("get")
     deadline = time.time() + timeout_s

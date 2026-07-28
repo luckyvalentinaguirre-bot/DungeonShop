@@ -1,155 +1,113 @@
-extends Node2D
-## ESCENA INICIAL DE DUNGEON SHOP (Etapa 1 + 2). Construye la tienda con piezas
-## MODULARES (piso en rejilla, paredes, puerta, muebles) en una vista 2D 3/4, con
-## iluminacion calida y camara encuadrada. Deja los muebles con sus PUNTOS DE
-## COLOCACION visibles ("espacio para objetos"), listos para la Etapa 3.
+extends Control
+## TIENDA — vista POV DETRÁS DEL MOSTRADOR. El "lugar" es una ILUSTRACIÓN generada en
+## el estilo del diseñador (game/art/bg_shop.png): manos del tendero, mostrador,
+## estanterías y puerta al pueblo. Encima va la VIDA (faroles titilando) y los PUNTOS
+## DE COLOCACIÓN sobre el mostrador (espacio para exponer objetos, Etapa 3).
 ##
-## Todo se compone por codigo a partir de piezas reemplazables: cambiar un .svg de
-## game/art/ por el sprite final del diseñador basta para renovar el look.
+## Cada lugar del juego se arma igual: fondo ilustrado + capas de interacción/animación.
+## Reemplazar el fondo = cambiar el .png en la misma ruta.
 
-const ART := "res://game/art/"
-const TILE := Vector2(128, 74)         # tamaño visual del azulejo de piso
+const BG := "res://game/art/bg_shop.png"
 
-# Rectangulo interior de la tienda (en unidades de mundo).
-const ROOM := Rect2(-560, -300, 1120, 620)
+## Puntos de colocación sobre el mostrador (fracción de pantalla). Aquí se posarán los
+## sprites de los objetos que ofrecés al cliente (Etapa 3).
+const COUNTER_SLOTS := [Vector2(0.40, 0.82), Vector2(0.50, 0.80), Vector2(0.60, 0.82)]
 
-var _yard: Node2D                      # contenedor de muebles con y-sort (profundidad)
+## Faroles colgantes para el titileo cálido (posición en fracción).
+const LANTERNS := [Vector2(0.305, 0.16), Vector2(0.665, 0.16)]
+
+var _vp: Vector2
+var _glow_tex: Texture2D
+var _flickers: Array = []          # {node, base_a, phase}
+var _t := 0.0
+var _slot_markers: Array = []
 
 func _ready() -> void:
-	_build_camera()
-	_build_ambient_light()
-	_build_floor()
-	_build_walls()
-	_yard = Node2D.new()
-	_yard.y_sort_enabled = true
-	add_child(_yard)
-	_build_furniture()
-	_build_lamps()
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_vp = get_viewport_rect().size
+	_glow_tex = _make_glow_texture()
+	_build_bg()
+	_build_lantern_glow()
+	_build_slots()
+	_build_hud()
+	set_process(true)
 
-# ------------------------------------------------------------------- camara
-func _build_camera() -> void:
-	var cam := Camera2D.new()
-	cam.position = Vector2(0, -20)
-	# zoom 1.1: agranda un poco la escena dejando ver toda la sala con margen.
-	cam.zoom = Vector2(1.1, 1.1)
-	cam.make_current()
-	add_child(cam)
+func _process(delta: float) -> void:
+	_t += delta
+	for f in _flickers:
+		var n: Sprite2D = f["node"]
+		var wave: float = 0.6 + 0.4 * sin(_t * 3.0 + f["phase"])
+		var noise: float = (randf() - 0.5) * 0.12
+		n.modulate.a = clampf(f["base_a"] * wave + noise, 0.0, 1.0)
 
-# --------------------------------------------------------------- iluminacion
-## Tienda "nivel 1": vieja y en penumbra calida. Los faroles agregan focos de luz.
-func _build_ambient_light() -> void:
-	var cm := CanvasModulate.new()
-	cm.color = Color(0.62, 0.55, 0.48)
-	add_child(cm)
+func _p(f: Vector2) -> Vector2:
+	return Vector2(f.x * _vp.x, f.y * _vp.y)
 
-# ------------------------------------------------------------------- piso
-func _build_floor() -> void:
-	var floor_tex := _tex("floor_tile.svg")
-	var layer := Node2D.new()
-	add_child(layer)
-	var cols := int(ROOM.size.x / TILE.x) + 2
-	var rows := int(ROOM.size.y / (TILE.y * 0.7)) + 2
-	for r in rows:
-		for c in cols:
-			var s := Sprite2D.new()
-			s.texture = floor_tex
-			s.centered = true
-			# Filas alternas desplazadas media baldosa (aspecto de tablones 3/4).
-			var ox := (TILE.x * 0.5) if (r % 2 == 1) else 0.0
-			s.position = ROOM.position + Vector2(c * TILE.x + ox, r * TILE.y * 0.7)
-			if _in_room(s.position):
-				layer.add_child(s)
+# ------------------------------------------------------------------- fondo
+func _build_bg() -> void:
+	var bg := TextureRect.new()
+	bg.texture = load(BG)
+	bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	bg.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(bg)
 
-func _in_room(p: Vector2) -> bool:
-	return p.x > ROOM.position.x - TILE.x and p.x < ROOM.end.x + TILE.x \
-		and p.y > ROOM.position.y - TILE.y and p.y < ROOM.end.y + TILE.y
+# --------------------------------------------------------------- vida (faroles)
+func _build_lantern_glow() -> void:
+	for pos in LANTERNS:
+		var g := Sprite2D.new()
+		g.texture = _glow_tex
+		g.position = _p(pos)
+		g.scale = Vector2(0.7, 0.7) * (_vp.x / 1920.0)
+		g.modulate = Color(1.0, 0.78, 0.42, 0.5)
+		add_child(g)
+		_flickers.append({"node": g, "base_a": 0.5, "phase": randf() * TAU})
 
-# ----------------------------------------------------------------- paredes
-func _build_walls() -> void:
-	var wall_tex := _tex("wall.svg")
-	var layer := Node2D.new()
-	add_child(layer)
-	# Pared del fondo (arriba), fila de segmentos.
-	var wall_w := 128.0
-	var n := int(ROOM.size.x / wall_w) + 1
-	for i in n:
-		var s := Sprite2D.new()
-		s.texture = wall_tex
-		s.centered = true
-		s.position = Vector2(ROOM.position.x + i * wall_w + wall_w * 0.5, ROOM.position.y - 20)
-		layer.add_child(s)
-	# Puerta centrada en la pared del fondo.
-	var door := Sprite2D.new()
-	door.texture = _tex("door.svg")
-	door.centered = true
-	if door.texture != null:
-		door.position = Vector2(0, ROOM.position.y - 20 - (door.texture.get_height() - 96) * 0.5)
-	else:
-		door.position = Vector2(0, ROOM.position.y - 20)
-	layer.add_child(door)
+# ------------------------------------------------------- puntos de colocación
+func _build_slots() -> void:
+	for pos in COUNTER_SLOTS:
+		var m := _make_marker(_p(pos), 60.0 * (_vp.x / 1920.0))
+		add_child(m)
+		_slot_markers.append(m)
 
-# ----------------------------------------------------------------- muebles
-func _build_furniture() -> void:
-	# Estanterias contra la pared del fondo (a los lados de la puerta).
-	_place(FurnitureCatalog.shelf_weapons(), Vector2(-360, ROOM.position.y + 150))
-	_place(FurnitureCatalog.shelf_potions(), Vector2(360, ROOM.position.y + 150))
-	# Estanteria de armaduras en el lateral izquierdo.
-	_place(FurnitureCatalog.shelf_armor(), Vector2(-470, ROOM.position.y + 320))
-	# Vitrina a la derecha, mas adelante.
-	_place(FurnitureCatalog.vitrina(), Vector2(330, ROOM.position.y + 360))
-	# Mostrador ANCHO en primer plano (POV detras del mostrador): grande y cercano.
-	var counter := _place(FurnitureCatalog.counter(), Vector2(0, ROOM.end.y + 120))
-	counter.scale = Vector2(3.0, 1.7)
-	# Manos del tendero apoyadas en el mostrador (sin rostro; ver punto 4).
-	_build_hands()
+func _make_marker(center: Vector2, s: float) -> Node2D:
+	var n := Node2D.new()
+	n.position = center
+	var half := s * 0.5
+	var fill := Polygon2D.new()
+	fill.polygon = PackedVector2Array([
+		Vector2(-half, -half), Vector2(half, -half), Vector2(half, half), Vector2(-half, half)])
+	fill.color = Color(1.0, 0.9, 0.6, 0.10)
+	n.add_child(fill)
+	var border := Line2D.new()
+	border.points = PackedVector2Array([
+		Vector2(-half, -half), Vector2(half, -half), Vector2(half, half),
+		Vector2(-half, half), Vector2(-half, -half)])
+	border.width = 2.0
+	border.default_color = Color(1.0, 0.85, 0.5, 0.30)
+	n.add_child(border)
+	return n
 
-func _place(data: FurnitureData, at: Vector2) -> ShopFurniture:
-	var f := ShopFurniture.new()
-	f.position = at
-	_yard.add_child(f)
-	f.setup(data)              # setup tras add_child para que AssetLibrary este listo
-	return f
-
-## Manos del protagonista en primer plano (POV). Van delante de todo (y mayor).
-func _build_hands() -> void:
-	var hands := Sprite2D.new()
-	hands.texture = _tex("hands.svg")
-	hands.centered = true
-	hands.z_index = 100
-	hands.position = Vector2(0, ROOM.end.y + 90)
-	hands.scale = Vector2(1.7, 1.7)
-	_yard.add_child(hands)
+# ------------------------------------------------------------------- HUD
+func _build_hud() -> void:
+	var hint := Label.new()
+	hint.text = "Esc: menú"
+	hint.add_theme_color_override("font_color", Color(0.95, 0.9, 0.8, 0.7))
+	hint.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.8))
+	hint.add_theme_constant_override("shadow_offset_x", 2)
+	hint.add_theme_constant_override("shadow_offset_y", 2)
+	hint.add_theme_font_size_override("font_size", int(_vp.y * 0.024))
+	hint.position = Vector2(_vp.x * 0.02, _vp.y * 0.02)
+	add_child(hint)
 
 func _unhandled_input(e: InputEvent) -> void:
 	if e is InputEventKey and e.pressed and not e.echo and e.keycode == KEY_ESCAPE:
 		get_tree().change_scene_to_file("res://game/scenes/Menu.tscn")
 
-# ------------------------------------------------------------------- faroles
-func _build_lamps() -> void:
-	_lamp(Vector2(-230, ROOM.position.y + 40))
-	_lamp(Vector2(230, ROOM.position.y + 40))
-	_lamp(Vector2(0, ROOM.end.y - 210))
-
-func _lamp(pos: Vector2) -> void:
-	var lamp := Sprite2D.new()
-	lamp.texture = _tex("lamp.svg")
-	lamp.centered = true
-	lamp.position = pos
-	_yard.add_child(lamp)
-	var light := PointLight2D.new()
-	light.texture = _light_texture()
-	light.color = Color(1.0, 0.82, 0.5)
-	light.energy = 1.1
-	light.texture_scale = 3.2
-	light.position = pos
-	add_child(light)
-
 # ------------------------------------------------------------------- helpers
-func _tex(name: String) -> Texture2D:
-	return AssetLibrary.texture(ART + name)
-
-## Textura radial suave para las luces de los faroles.
-func _light_texture() -> Texture2D:
+## Textura radial suave para el brillo de los faroles.
+func _make_glow_texture() -> Texture2D:
 	var grad := Gradient.new()
 	grad.set_color(0, Color(1, 1, 1, 1))
 	grad.set_color(1, Color(1, 1, 1, 0))
