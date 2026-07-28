@@ -17,7 +17,9 @@ Nota: usa el endpoint sincrono de Replicate (Prefer: wait); no hace falta pollea
 Solo depende de la libreria estandar (urllib), asi no requiere pip.
 """
 import argparse
+import base64
 import json
+import mimetypes
 import os
 import sys
 import time
@@ -54,19 +56,33 @@ def _poll(data: dict, token: str, timeout_s: int = 180) -> dict:
     return data
 
 
-def generate(prompt: str, out_path: str, model: str, aspect: str, fmt: str, use_style: bool) -> None:
+def _data_uri(path: str) -> str:
+    """Codifica una imagen local como data URI para pasarla a Replicate."""
+    mime = mimetypes.guess_type(path)[0] or "image/png"
+    with open(path, "rb") as f:
+        b64 = base64.b64encode(f.read()).decode("ascii")
+    return "data:%s;base64,%s" % (mime, b64)
+
+
+def generate(prompt: str, out_path: str, model: str, aspect: str, fmt: str,
+             use_style: bool, ref: str, strength: float) -> None:
     token = os.environ.get("REPLICATE_API_TOKEN")
     if not token:
         sys.exit("ERROR: falta REPLICATE_API_TOKEN (cargalo como secreto del entorno).")
 
     full_prompt = prompt + (STYLE if use_style else "")
-    body = json.dumps({
-        "input": {
-            "prompt": full_prompt,
-            "aspect_ratio": aspect,
-            "output_format": fmt,
-        }
-    }).encode("utf-8")
+    inp = {
+        "prompt": full_prompt,
+        "aspect_ratio": aspect,
+        "output_format": fmt,
+    }
+    if ref:
+        # img2img: usa la imagen del diseñador como referencia de estilo/composicion.
+        if not os.path.exists(ref):
+            sys.exit("ERROR: no existe la imagen de referencia: %s" % ref)
+        inp["image"] = _data_uri(ref)
+        inp["prompt_strength"] = strength  # 0=calca la ref, 1=la ignora
+    body = json.dumps({"input": inp}).encode("utf-8")
 
     req = urllib.request.Request(
         API % model,
@@ -107,8 +123,15 @@ def main() -> None:
     ap.add_argument("--model", default="black-forest-labs/flux-schnell")
     ap.add_argument("--format", default="png")
     ap.add_argument("--no-style", action="store_true", help="no agregar el sufijo de estilo comun")
+    ap.add_argument("--ref", default="", help="imagen de referencia (img2img: usa tu arte como base)")
+    ap.add_argument("--strength", type=float, default=0.6,
+                    help="fuerza del prompt en img2img: 0=calca la referencia, 1=la ignora")
     a = ap.parse_args()
-    generate(a.prompt, a.output, a.model, a.aspect, a.format, not a.no_style)
+    # img2img requiere un modelo que acepte imagen; schnell no. Cambiamos a flux-dev.
+    model = a.model
+    if a.ref and model == "black-forest-labs/flux-schnell":
+        model = "black-forest-labs/flux-dev"
+    generate(a.prompt, a.output, model, a.aspect, a.format, not a.no_style, a.ref, a.strength)
 
 
 if __name__ == "__main__":
