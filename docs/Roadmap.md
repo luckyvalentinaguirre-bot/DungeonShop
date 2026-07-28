@@ -72,12 +72,24 @@ O abre el proyecto en el editor de Godot y pulsa **F5**.
 
 ---
 
-## Fase 4 — Clientes
+## Fase 4 — Clientes ✅ (completada)
 
-- `CustomerData`, `CustomerNeed`, `CustomerSpawner`, `CustomerController`,
-  `HaggleResolver`, `MoodComponent` (ver [systems/02](systems/02_Customers.md)).
-- Resolver la mecánica de negociación (🔴).
-- **DoD:** clientes llegan, piden y compran contra el motor económico; testeado.
+- [x] `CustomerData`, `CustomerNeed`, `Customer`, `CustomerSpawner`,
+      `CustomerController`, `HaggleResolver`, `MoodComponent`, `ShopQueue`,
+      `ShelfPurchaseResolver` (ver [systems/02](systems/02_Customers.md)).
+- [x] Negociación resuelta: automática por ánimo (`HaggleResolver`).
+- [x] Modelo de atención **híbrido**: cola de mostrador (con regateo) + autoservicio
+      de estantería. La estantería opera sobre una lista de productos (se conecta al
+      inventario real en Fase 5).
+- [x] 6 archivos de tests nuevos; demo de jornada en `scenes/dev/ShopDayDemo.tscn`.
+- **DoD:** ✅ los clientes llegan, piden y compran contra el motor económico, por las
+  dos vías, todo testeado. Sin UI.
+
+### Cómo probarlo (Godot 4.3+)
+```bash
+godot --headless --path . res://scenes/dev/ShopDayDemo.tscn   # simula una jornada
+godot --headless --path . --script res://tests/run_tests.gd   # todos los tests
+```
 
 ---
 

@@ -27,8 +27,8 @@ Estamos en **desarrollo por fases**. No se avanza de fase hasta cerrar la anteri
 | 1 | Arquitectura completa | ✅ Completada |
 | 2 | Diseño del mundo | ✅ Completada |
 | 3 | Sistema de economía | ✅ Completada (primer código + tests) |
-| 4 | Clientes | ⬜ Pendiente (próxima) |
-| 5 | Objetos | ⬜ Pendiente |
+| 4 | Clientes | ✅ Completada (modelo híbrido + tests) |
+| 5 | Objetos | ⬜ Pendiente (próxima) |
 | 6 | Fabricación | ⬜ Pendiente |
 | 7 | Interfaz | ⬜ Pendiente |
 | 8 | Guardado | ⬜ Pendiente |

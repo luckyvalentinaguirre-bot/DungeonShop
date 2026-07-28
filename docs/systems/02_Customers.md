@@ -110,6 +110,19 @@ Simple, fluido y *cozy* — la base ideal.
 ## 11. Preguntas abiertas
 
 - 🟢 *(cerrada en Fase 3)* Mecánica de negociación = automática por ánimo (§7).
-- 🔴 ¿Cola de clientes simultánea o de uno en uno en el mostrador? Afecta a UI y ritmo.
-  Decidir al empezar Fase 4.
+- 🟢 *(cerrada en Fase 4)* Modelo de atención = **híbrido**: cola de mostrador
+  atendida (`ShopQueue` + `CustomerController`, con regateo) **y** clientes de
+  autoservicio que compran de la estantería (`ShelfPurchaseResolver`). La necesidad
+  lleva un `intent` (COUNTER/SHELF) que decide la vía.
 - 🟡 Cuántos recurrentes en v1.0 (objetivo ~14–20, ver GDD scope y [NPCs](../NPCs.md)).
+
+## 12. Estado de implementación (Fase 4) ✅
+
+Implementado y cubierto por tests: `CustomerData`, `CustomerNeed`, `Customer`
+(agregado runtime), `MoodComponent`, `HaggleResolver` (puro), `CustomerNeedGenerator`
+(puro, determinista), `CustomerController` (visita de mostrador), `ShopQueue`,
+`ShelfPurchaseResolver` (puro) y `CustomerSpawner`. Demo de jornada híbrida en
+`scenes/dev/ShopDayDemo.tscn`.
+**Pendiente para fases posteriores:** conectar la estantería al inventario real
+(Fase 5), reponer stock, y enriquecer el mostrador con diálogo en recurrentes (Fase 7).
+La vía SHELF ya funciona sobre una lista de productos que hoy se pasa como parámetro.

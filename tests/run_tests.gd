@@ -8,11 +8,19 @@ extends SceneTree
 ## Ver docs/systems/00_Architecture.md §9 y docs/Roadmap.md (Fase 3).
 
 const TEST_SCRIPTS: Array = [
+	# Economía (Fase 3)
 	preload("res://tests/unit/test_price_calculator.gd"),
 	preload("res://tests/unit/test_demand_model.gd"),
 	preload("res://tests/unit/test_wallet.gd"),
 	preload("res://tests/unit/test_market.gd"),
 	preload("res://tests/unit/test_transaction.gd"),
+	# Clientes (Fase 4)
+	preload("res://tests/unit/test_haggle_resolver.gd"),
+	preload("res://tests/unit/test_mood.gd"),
+	preload("res://tests/unit/test_customer_need_generator.gd"),
+	preload("res://tests/unit/test_customer_controller.gd"),
+	preload("res://tests/unit/test_shelf_purchase.gd"),
+	preload("res://tests/unit/test_shop_queue.gd"),
 ]
 
 func _initialize() -> void:

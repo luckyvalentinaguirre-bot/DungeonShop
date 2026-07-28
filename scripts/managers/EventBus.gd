@@ -12,8 +12,14 @@ signal material_purchased(material: ItemData, qty: int, cost: int)
 signal wallet_changed(owner: Object, new_balance: int)
 signal market_week_advanced(week: int)
 
+# --- Clientes (Fase 4) ---
+signal customer_arrived(customer: Object)
+signal customer_need_presented(need: Object)
+signal customer_satisfied(customer: Object, mood: float)
+signal customer_left_unhappy(customer: Object)
+
 # --- Tiempo (compartido) ---
 signal day_advanced(day: int)
 
-# Las señales de clientes, héroes, reputación, fabricación, eventos, misiones y
-# logros se añadirán en sus respectivas fases (ver docs/systems/*).
+# Las señales de héroes, reputación, fabricación, eventos, misiones y logros se
+# añadirán en sus respectivas fases (ver docs/systems/*).
