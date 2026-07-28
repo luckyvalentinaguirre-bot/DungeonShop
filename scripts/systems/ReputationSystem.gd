@@ -20,6 +20,10 @@ var _affinity: Dictionary = {}
 func prestige() -> float:
 	return _prestige
 
+## Suma prestigio directamente (p. ej. recompensa de misión).
+func add_prestige(delta: float) -> void:
+	_prestige = maxf(0.0, _prestige + delta)
+
 func affinity_of(faction: int) -> float:
 	return float(_affinity.get(faction, 0.0))
 

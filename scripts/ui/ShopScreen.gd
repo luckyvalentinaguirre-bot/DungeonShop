@@ -31,6 +31,9 @@ func _ready() -> void:
 	_refresh_stock()
 	GameState.gold_changed.connect(func(_v: int) -> void: _refresh_hud())
 	GameState.day_changed.connect(func(_d: int) -> void: _refresh_hud())
+	GameState.quest_completed.connect(func(q: QuestData) -> void: _log_line("[color=#e8b06a]★ Misión completada: %s (+%d oro)[/color]" % [q.display_name, q.reward_gold]))
+	GameState.achievement_unlocked.connect(func(a: AchievementData) -> void: _log_line("[color=#4fd0c8]🏆 Logro: %s[/color]" % a.display_name))
+	GameState.event_started.connect(func(e: EventData) -> void: _log_line("[color=#d9a86a]※ Evento: %s — %s[/color]" % [e.display_name, e.description]))
 	_log_line("[color=#e8b06a]Abres la tienda de la abuela Rilda. ¡A trabajar![/color]")
 
 # ---------------------------------------------------------------- construcción UI
@@ -180,6 +183,7 @@ func _resolve_shelf(customer: Customer) -> void:
 	if result.bought:
 		GameState.stock.remove(result.item.data.id, 1)
 		GameState.record_sale_reputation(customer)
+		GameState.notify_sale(result.price)
 		_log_line("[color=#8fd08a]%s cogió %s de la estantería y pagó %d coronas.[/color]" % [customer.display_name(), result.item.data.display_name, result.price])
 		_character.play_happy()
 		_refresh_stock()
@@ -219,6 +223,7 @@ func _on_offer() -> void:
 	if result.sold:
 		GameState.stock.remove(_selected_slot.data.id, 1)
 		GameState.record_sale_reputation(_current)
+		GameState.notify_sale(_offer_price)
 		_log_line("[color=#8fd08a]Vendiste %s a %s por %d coronas.[/color]" % [_selected_slot.data.display_name, _current.display_name(), _offer_price])
 		_character.play_happy()
 		_refresh_hud()

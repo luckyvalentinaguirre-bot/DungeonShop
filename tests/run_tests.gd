@@ -32,6 +32,10 @@ const TEST_SCRIPTS: Array = [
 	# Reputación y héroes
 	preload("res://tests/unit/test_reputation_system.gd"),
 	preload("res://tests/unit/test_expedition_resolver.gd"),
+	# Eventos, misiones y logros
+	preload("res://tests/unit/test_event_engine.gd"),
+	preload("res://tests/unit/test_quest_system.gd"),
+	preload("res://tests/unit/test_achievement_system.gd"),
 ]
 
 func _initialize() -> void:

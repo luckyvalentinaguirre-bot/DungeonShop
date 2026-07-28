@@ -8,12 +8,20 @@ extends Node
 signal gold_changed(amount: int)
 signal day_changed(day: int)
 signal skill_leveled(skill_id: StringName, new_level: int)
+signal quest_completed(quest: QuestData)
+signal achievement_unlocked(achievement: AchievementData)
+signal event_started(event: EventData)
 
 var economy: EconomySystem
 var item_db: ItemDatabase
 var crafting: CraftingLibrary
 var skills: PlayerSkills
 var reputation: ReputationSystem
+var quests: QuestSystem
+var achievements: AchievementSystem
+var events: EventEngine
+var event_catalog: Array = []
+var hero_manager: HeroManager
 ## Materiales que se pueden comprar en el mercado (ids del catálogo).
 var market_materials: Array = [&"mat_iron", &"mat_steel", &"mat_quicksilver"]
 var player_wallet: WalletComponent
@@ -36,6 +44,10 @@ func new_game() -> void:
 
 	skills = PlayerSkills.new()
 	reputation = ReputationSystem.new()
+	quests = QuestSystem.new()
+	achievements = AchievementSystem.new()
+	events = EventEngine.new()
+	hero_manager = HeroManager.new()
 
 	economy = EconomySystem.new()
 	economy.name = "EconomySystem"
@@ -57,6 +69,7 @@ func new_game() -> void:
 	_stock_initial()
 
 	customer_pool = _default_pool()
+	_seed_progression_content()
 	day = 1
 
 	day_changed.emit(day)
@@ -88,6 +101,7 @@ func craft(recipe: RecipeData, materials: Array) -> CraftingResolver.Result:
 			if m != null and m.data != null:
 				stock.remove(m.data.id, m.quantity)
 		stock.add(result.output)
+		_record_progress(&"items_crafted", 1)
 		# Aprender haciendo: cada fabricación da experiencia de herrería.
 		if skills.add_xp(PlayerSkills.SMITHING, 25):
 			skill_leveled.emit(PlayerSkills.SMITHING, skills.level_of(PlayerSkills.SMITHING))
@@ -98,6 +112,27 @@ func craft(recipe: RecipeData, materials: Array) -> CraftingResolver.Result:
 func record_sale_reputation(customer: Customer) -> void:
 	if customer != null and customer.data != null and reputation != null:
 		reputation.register_sale(customer.data.faction, customer.mood.value)
+
+## Notifica una venta para el progreso de misiones y logros. Lo llama la UI.
+func notify_sale(price: int) -> void:
+	_record_progress(&"items_sold", 1)
+	_record_progress(&"gold_earned", maxi(0, price))
+
+## Alimenta una estadística de progreso y aplica misiones/logros que se completen.
+func _record_progress(stat_name: StringName, amount: int) -> void:
+	var bus := get_node_or_null("/root/EventBus")
+	for q in quests.record(stat_name, amount):
+		if q.reward_gold > 0:
+			player_wallet.receive(q.reward_gold)
+		if q.reward_prestige > 0.0:
+			reputation.add_prestige(q.reward_prestige)
+		quest_completed.emit(q)
+		if bus != null:
+			bus.emit_signal("quest_completed", q)
+	for a in achievements.record(stat_name, amount):
+		achievement_unlocked.emit(a)
+		if bus != null:
+			bus.emit_signal("achievement_unlocked", a)
 
 ## Precio de compra actual de un material en el mercado.
 func material_price(item_id: StringName) -> int:
@@ -124,13 +159,30 @@ func advance_day() -> void:
 	day += 1
 	if economy != null:
 		economy.demand.advance_day()
+		# Eventos activos que expiran hoy.
+		if events != null:
+			events.advance_day(economy.demand)
 		var config := economy.config
 		if config != null and config.days_per_week > 0 and day % config.days_per_week == 1:
 			economy.market.advance_week()
+			_maybe_trigger_events()
 	day_changed.emit(day)
 	var bus := get_node_or_null("/root/EventBus")
 	if bus != null:
 		bus.emit_signal("day_advanced", day)
+
+## Al empezar la semana, cada evento del catálogo puede dispararse según su
+## probabilidad. Ver docs/systems/07_Events.md.
+func _maybe_trigger_events() -> void:
+	for event in event_catalog:
+		if events.is_active(event):
+			continue
+		if rng.randf() < event.weekly_chance:
+			events.start(event, economy.demand)
+			event_started.emit(event)
+			var bus := get_node_or_null("/root/EventBus")
+			if bus != null:
+				bus.emit_signal("event_started", event)
 
 func _config() -> EconomyConfig:
 	var gc := get_node_or_null("/root/GameConfig")
@@ -139,6 +191,72 @@ func _config() -> EconomyConfig:
 		if e != null:
 			return e
 	return EconomyConfig.new()
+
+## Contenido inicial de progresión (semilla en código; migrará a resources/ al crecer).
+func _seed_progression_content() -> void:
+	# Misiones de arranque (tutorial + primera meta de negocio).
+	quests.add_quest(_quest(&"q_first_sale", "Primera venta", "Vende tu primer objeto.", &"items_sold", 1, 20, 1.0))
+	quests.add_quest(_quest(&"q_first_craft", "Primer forjado", "Fabrica tu primer objeto.", &"items_crafted", 1, 20, 1.0))
+	quests.add_quest(_quest(&"q_merchant", "Comerciante en ciernes", "Gana 300 coronas vendiendo.", &"gold_earned", 300, 100, 5.0))
+	# Logros semilla.
+	achievements.register([
+		_achievement(&"ach_first_sale", "Abierto al público", &"items_sold", 1),
+		_achievement(&"ach_ten_sales", "Tendero establecido", &"items_sold", 10),
+		_achievement(&"ach_smith", "Manos de herrero", &"items_crafted", 10),
+		_achievement(&"ach_rich", "Bolsa llena", &"gold_earned", 1000),
+	])
+	# Catálogo de eventos del reino.
+	event_catalog = [
+		_war_event(),
+		_festival_event(),
+	]
+
+func _quest(id: StringName, qname: String, desc: String, stat: StringName, target: int, gold: int, prestige: float) -> QuestData:
+	var obj := QuestObjective.new()
+	obj.stat = stat
+	obj.target = target
+	var q := QuestData.new()
+	q.id = id
+	q.display_name = qname
+	q.description = desc
+	q.objectives = [obj]
+	q.reward_gold = gold
+	q.reward_prestige = prestige
+	return q
+
+func _achievement(id: StringName, aname: String, stat: StringName, target: int) -> AchievementData:
+	var a := AchievementData.new()
+	a.id = id
+	a.display_name = aname
+	a.stat = stat
+	a.target = target
+	return a
+
+func _war_event() -> EventData:
+	var effect := DemandBiasEffect.new()
+	effect.category = GameEnums.Category.WEAPON
+	effect.delta = 0.5
+	var e := EventData.new()
+	e.id = &"event_war"
+	e.display_name = "Guerra fronteriza"
+	e.description = "Los ejércitos necesitan armas: la demanda se dispara."
+	e.duration_days = 4
+	e.weekly_chance = 0.25
+	e.effects = [effect]
+	return e
+
+func _festival_event() -> EventData:
+	var effect := DemandBiasEffect.new()
+	effect.category = GameEnums.Category.POTION
+	effect.delta = 0.3
+	var e := EventData.new()
+	e.id = &"event_festival"
+	e.display_name = "Feria de la Fragua"
+	e.description = "Llega gente al pueblo: más demanda de pociones y lujo."
+	e.duration_days = 3
+	e.weekly_chance = 0.3
+	e.effects = [effect]
+	return e
 
 func _stock_initial() -> void:
 	_add_stock(&"potion_heal", 2, 4)
