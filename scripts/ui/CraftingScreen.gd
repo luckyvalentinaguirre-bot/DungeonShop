@@ -34,11 +34,20 @@ func _ready() -> void:
 	if GameState.economy == null:
 		GameState.new_game()
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	var bg := ColorRect.new()
-	bg.color = Color("241a12")
-	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(bg)
+	# Fondo: ilustracion del rincon de fabricacion (mismo estilo del juego).
+	var art := TextureRect.new()
+	art.texture = load("res://assets/ui/crafting_art.png")
+	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	art.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	art.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(art)
+	# Velo oscuro para que los pergaminos del Recipe Book se lean bien encima.
+	var veil := ColorRect.new()
+	veil.color = Color(0.14, 0.10, 0.07, 0.45)
+	veil.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	veil.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(veil)
 	_ui_root = CanvasLayer.new()
 	add_child(_ui_root)
 	_build_ui()
