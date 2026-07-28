@@ -24,6 +24,11 @@ func _ready() -> void:
 	new_game_btn.pressed.connect(_on_new_game)
 	box.add_child(new_game_btn)
 
+	var continue_btn := UiFactory.button("Continuar")
+	continue_btn.disabled = not SaveManager.has_save(1)
+	continue_btn.pressed.connect(_on_continue)
+	box.add_child(continue_btn)
+
 	var quit_btn := UiFactory.button("Salir")
 	quit_btn.pressed.connect(_on_quit)
 	box.add_child(quit_btn)
@@ -31,6 +36,10 @@ func _ready() -> void:
 func _on_new_game() -> void:
 	GameState.new_game()
 	SceneRouter.goto_shop()
+
+func _on_continue() -> void:
+	if SaveManager.load_game(1):
+		SceneRouter.goto_shop()
 
 func _on_quit() -> void:
 	get_tree().quit()

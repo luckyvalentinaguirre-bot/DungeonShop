@@ -47,7 +47,14 @@ func capture_state() -> Dictionary:
 	return {"levels": _levels.duplicate(), "xp": _xp.duplicate()}
 
 func restore_state(data: Dictionary) -> void:
+	# Las claves (ids de habilidad) se normalizan a StringName tras pasar por JSON.
+	_levels.clear()
+	_xp.clear()
 	var lv = data.get("levels", {})
 	var xp = data.get("xp", {})
-	_levels = (lv as Dictionary).duplicate() if lv is Dictionary else {}
-	_xp = (xp as Dictionary).duplicate() if xp is Dictionary else {}
+	if lv is Dictionary:
+		for key in lv.keys():
+			_levels[StringName(key)] = int(lv[key])
+	if xp is Dictionary:
+		for key in xp.keys():
+			_xp[StringName(key)] = int(xp[key])

@@ -120,7 +120,7 @@ func notify_sale(price: int) -> void:
 
 ## Alimenta una estadística de progreso y aplica misiones/logros que se completen.
 func _record_progress(stat_name: StringName, amount: int) -> void:
-	var bus := get_node_or_null("/root/EventBus")
+	var bus := _bus()
 	for q in quests.record(stat_name, amount):
 		if q.reward_gold > 0:
 			player_wallet.receive(q.reward_gold)
@@ -149,7 +149,7 @@ func buy_material(item_id: StringName, qty: int) -> bool:
 		return false
 	player_wallet.pay(cost)
 	stock.add(ItemInstance.new(mat, 0, qty))
-	var bus := get_node_or_null("/root/EventBus")
+	var bus := _bus()
 	if bus != null:
 		bus.emit_signal("material_purchased", mat, qty, cost)
 	return true
@@ -167,7 +167,7 @@ func advance_day() -> void:
 			economy.market.advance_week()
 			_maybe_trigger_events()
 	day_changed.emit(day)
-	var bus := get_node_or_null("/root/EventBus")
+	var bus := _bus()
 	if bus != null:
 		bus.emit_signal("day_advanced", day)
 
@@ -180,17 +180,61 @@ func _maybe_trigger_events() -> void:
 		if rng.randf() < event.weekly_chance:
 			events.start(event, economy.demand)
 			event_started.emit(event)
-			var bus := get_node_or_null("/root/EventBus")
+			var bus := _bus()
 			if bus != null:
 				bus.emit_signal("event_started", event)
 
+## Devuelve el autoload EventBus, o null si no estamos en el árbol (p. ej. en tests).
+func _bus() -> Node:
+	if not is_inside_tree():
+		return null
+	return get_node_or_null("/root/EventBus")
+
 func _config() -> EconomyConfig:
-	var gc := get_node_or_null("/root/GameConfig")
-	if gc != null:
-		var e = gc.get("economy")
-		if e != null:
-			return e
+	if is_inside_tree():
+		var gc := get_node_or_null("/root/GameConfig")
+		if gc != null:
+			var e = gc.get("economy")
+			if e != null:
+				return e
 	return EconomyConfig.new()
+
+# ------------------------------------------------------------------- Guardado
+const SAVE_VERSION := 1
+
+## Serializa el estado de la partida a un diccionario (JSON-safe).
+## Ver docs/systems/08_Save.md.
+func capture_state() -> Dictionary:
+	return {
+		"version": SAVE_VERSION,
+		"day": day,
+		"gold": player_wallet.balance,
+		"skills": skills.capture_state(),
+		"reputation": reputation.capture_state(),
+		"demand": economy.demand.capture_state(),
+		"stock": stock.capture_state(),
+	}
+
+## Reconstruye la partida desde un diccionario. Requiere que los servicios ya
+## existan (llama antes a new_game si hace falta).
+func restore_state(data: Dictionary) -> void:
+	if economy == null:
+		new_game()
+	day = int(data.get("day", 1))
+	player_wallet.balance = int(data.get("gold", 0))
+	skills.restore_state(data.get("skills", {}))
+	reputation.restore_state(data.get("reputation", {}))
+	economy.demand.restore_state(data.get("demand", {}))
+	_restore_stock(data.get("stock", []))
+	day_changed.emit(day)
+	gold_changed.emit(player_wallet.balance)
+
+func _restore_stock(entries: Array) -> void:
+	stock = Inventory.new(64)
+	for entry in entries:
+		var data := item_db.get_item(StringName(entry.get("id", "")))
+		if data != null:
+			stock.add(ItemInstance.new(data, int(entry.get("quality", 0)), int(entry.get("quantity", 1))))
 
 ## Contenido inicial de progresión (semilla en código; migrará a resources/ al crecer).
 func _seed_progression_content() -> void:

@@ -57,5 +57,8 @@ func capture_state() -> Dictionary:
 
 func restore_state(data: Dictionary) -> void:
 	_prestige = float(data.get("prestige", 0.0))
+	_affinity.clear()
 	var aff = data.get("affinity", {})
-	_affinity = (aff as Dictionary).duplicate() if aff is Dictionary else {}
+	if aff is Dictionary:
+		for key in aff.keys():
+			_affinity[int(key)] = float(aff[key])

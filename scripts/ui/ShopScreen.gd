@@ -84,6 +84,10 @@ func _build_hud() -> Control:
 	var day_btn := UiFactory.button("Avanzar jornada")
 	day_btn.pressed.connect(_on_advance_day)
 	row.add_child(day_btn)
+	var save_btn := UiFactory.button("Guardar")
+	save_btn.custom_minimum_size = Vector2(90, 40)
+	save_btn.pressed.connect(_on_save)
+	row.add_child(save_btn)
 	var menu_btn := UiFactory.button("Menú")
 	menu_btn.custom_minimum_size = Vector2(80, 40)
 	menu_btn.pressed.connect(func() -> void: SceneRouter.goto_main_menu())
@@ -248,6 +252,10 @@ func _end_visit() -> void:
 func _on_advance_day() -> void:
 	GameState.advance_day()
 	_log_line("[color=#e8b06a]— Nueva jornada (%d) —[/color]" % GameState.day)
+
+func _on_save() -> void:
+	if SaveManager.save_game(1):
+		_log_line("[color=#8fd08a]Partida guardada.[/color]")
 
 # ---------------------------------------------------------------- refrescos UI
 func _refresh_hud() -> void:

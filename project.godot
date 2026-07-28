@@ -19,10 +19,10 @@ config/icon="res://assets/icons/icon.svg"
 [autoload]
 
 ; --- Core managers (order matters: dependencies first) ---
-; Se activan los autoloads ya implementados. Pendientes de su fase:
-;   SaveManager (Fase 8), AudioManager (Fase 7-pulido).
+; Pendiente de su fase: AudioManager (pulido).
 EventBus="*res://scripts/managers/EventBus.gd"
 GameConfig="*res://scripts/managers/GameConfig.gd"
+SaveManager="*res://scripts/save/SaveManager.gd"
 GameState="*res://scripts/managers/GameState.gd"
 SceneRouter="*res://scripts/managers/SceneRouter.gd"
 

@@ -43,4 +43,8 @@ func capture_state() -> Dictionary:
 	return _demand.duplicate()
 
 func restore_state(data: Dictionary) -> void:
-	_demand = data.duplicate()
+	# Las claves de categoría pueden llegar como texto (tras pasar por JSON): se
+	# normalizan a int.
+	_demand.clear()
+	for key in data.keys():
+		_demand[int(key)] = float(data[key])

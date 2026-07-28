@@ -36,6 +36,9 @@ const TEST_SCRIPTS: Array = [
 	preload("res://tests/unit/test_event_engine.gd"),
 	preload("res://tests/unit/test_quest_system.gd"),
 	preload("res://tests/unit/test_achievement_system.gd"),
+	# Diálogos y guardado
+	preload("res://tests/unit/test_dialogue_runner.gd"),
+	preload("res://tests/unit/test_save_roundtrip.gd"),
 ]
 
 func _initialize() -> void:
