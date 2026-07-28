@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="RecipeData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/RecipeData.gd" id="1_recipe"]
+
+[resource]
+script = ExtResource("1_recipe")
+id = &"recipe_short_sword"
+display_name = "Espada corta"
+output_item_id = &"weapon_short_sword"
+station_id = &"forge"
+base_quality_score = 2.0
+base_defect_chance = 0.05
+required_categories = [5]
+required_quantities = [2]

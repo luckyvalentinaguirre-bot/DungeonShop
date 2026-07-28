@@ -94,9 +94,24 @@ mínima, plazo). Cumplirlo da oro + reputación extra; fallarlo, lo contrario.
 
 ## 10. Preguntas abiertas
 
-- 🔴 ¿Hay **fabricación libre/experimental** (sin receta) además de recetas, o solo
-  recetas con materiales variables? La libre da identidad pero es más difícil de
-  balancear. Recomendado: recetas con materiales variables en v1.0, libre como
-  desbloqueo avanzado.
-- 🔴 ¿La fabricación consume tiempo/jornadas o es instantánea? Afecta al ritmo.
-- 🟡 Lista concreta de rasgos y estaciones se cierra en Fase 5–6.
+- 🟢 *(cerrada en Fase 6)* **Recetas con materiales variables** en v1.0 (no
+  fabricación libre): la receta fija la salida y las categorías de entrada, y el
+  jugador elige qué materiales concretos (con sus rasgos) las rellenan. La libre
+  queda como posible desbloqueo avanzado post-v1.
+- 🟢 *(cerrada en Fase 6)* Fabricación **instantánea** en v1.0 (el coste temporal
+  puede añadirse después sin cambiar el `CraftingResolver`).
+- 🟡 Lista definitiva de rasgos y estaciones se amplía con el contenido (hoy hay un
+  set semilla: filo, tenacidad, pureza, volatilidad; estación "Yunque").
+
+## 11. Estado de implementación (Fase 6) ✅
+
+Implementado y cubierto por tests: `MaterialTrait`, `RecipeData`,
+`CraftingStationData`, `QualityCalculator` (puro) y `CraftingResolver` (puro:
+valida ranuras, combina rasgos en un perfil de atributos, calcula calidad 0..5 y
+defecto con RNG sembrado). `ItemData` lleva `material_traits`; `ItemInstance` lleva
+`traits`, `attributes` y `defect`. Contenido semilla como Resources: rasgos en
+`resources/items/traits/`, materiales `mat_steel`/`mat_quicksilver`, receta
+`recipe_short_sword`, estación `station_forge`. Demo en `scenes/dev/CraftingDemo.tscn`
+que muestra la misma receta dando perfiles distintos según los materiales.
+**Pendiente:** consumo de inventario al fabricar y estación interactiva (se integran
+con la UI en Fase 7); aprender recetas / mejorar estaciones (Fase 9).

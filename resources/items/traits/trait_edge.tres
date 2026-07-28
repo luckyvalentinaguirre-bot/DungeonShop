@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="MaterialTrait" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/MaterialTrait.gd" id="1_trait"]
+
+[resource]
+script = ExtResource("1_trait")
+id = &"edge"
+display_name = "Filo"
+quality_bonus = 0.3
+defect_chance_delta = 0.0
+tags_added = [&"afilado"]

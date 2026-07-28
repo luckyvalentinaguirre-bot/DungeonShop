@@ -111,12 +111,23 @@ godot --headless --path . --script res://tests/run_tests.gd   # todos los tests
 
 ---
 
-## Fase 6 — Fabricación
+## Fase 6 — Fabricación ✅ (completada)
 
-- `RecipeData`, `MaterialTrait`, estaciones, `CraftingResolver`,
-  `QualityCalculator` ([systems/05](systems/05_Crafting.md)).
-- Rasgos de material y calidad/defectos.
-- **DoD:** se fabrica un objeto combinando materiales con rasgos; testeado.
+- [x] `RecipeData`, `MaterialTrait`, `CraftingStationData`, `CraftingResolver`,
+      `QualityCalculator` ([systems/05](systems/05_Crafting.md)).
+- [x] Rasgos de material combinados en un perfil de atributos + calidad/defectos.
+- [x] Contenido semilla como Resources (rasgos, materiales, receta, estación).
+- [x] 2 archivos de tests nuevos; demo en `scenes/dev/CraftingDemo.tscn`.
+- **Decisiones cerradas:** recetas con materiales variables (no libre); fabricación
+  instantánea en v1.0.
+- **DoD:** ✅ se fabrica un objeto combinando materiales con rasgos, y la misma receta
+  da perfiles distintos; testeado.
+
+### Cómo probarlo (Godot 4.3+)
+```bash
+godot --headless --path . res://scenes/dev/CraftingDemo.tscn   # fabricación con perfiles
+godot --headless --path . --script res://tests/run_tests.gd    # todos los tests
+```
 
 ---
 

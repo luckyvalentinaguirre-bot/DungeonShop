@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="CraftingStationData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/CraftingStationData.gd" id="1_station"]
+
+[resource]
+script = ExtResource("1_station")
+id = &"forge"
+display_name = "Yunque"
+level = 1
+quality_bonus_per_level = 0.3
+defect_reduction_per_level = 0.02

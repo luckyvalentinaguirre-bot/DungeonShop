@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/ItemData.gd" id="1_item"]
+[ext_resource type="Resource" path="res://resources/items/traits/trait_edge.tres" id="2_edge"]
+[ext_resource type="Resource" path="res://resources/items/traits/trait_tenacity.tres" id="3_ten"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"mat_steel"
+display_name = "Acero"
+category = 5
+base_value = 20
+rarity = 1
+stackable = true
+max_stack = 50
+tags = []
+material_traits = [ExtResource("2_edge"), ExtResource("3_ten")]

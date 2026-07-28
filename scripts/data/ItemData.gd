@@ -21,3 +21,6 @@ extends Resource
 ## Etiquetas libres para adecuación con héroes/clientes (p. ej. &"ligero",
 ## &"arcano"). Se explota en la Fase 3-héroes/Fase 6. Ver docs/systems/03_Heroes.md.
 @export var tags: Array = []
+## Rasgos que este material aporta al fabricar (Array[MaterialTrait]). Solo tiene
+## sentido en objetos de categoría MATERIAL. Ver docs/systems/05_Crafting.md.
+@export var material_traits: Array = []
