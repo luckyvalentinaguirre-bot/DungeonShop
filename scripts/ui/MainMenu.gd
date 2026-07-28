@@ -48,8 +48,8 @@ func _build_background() -> void:
 
 # ------------------------------------------------------------------- ambiente
 func _build_ambient() -> void:
-	# Fuego de la chimenea.
-	var fire := _particles(_bg(440, 205), 46, 0.7)
+	# Fuego de la chimenea (rincón derecho).
+	var fire := _particles(_bg(441, 182), 46, 0.7)
 	fire.emission_rect_extents = Vector2(10, 5) * _scale.x
 	fire.direction = Vector2(0, -1)
 	fire.gravity = Vector2(0, -150) * _scale.y
@@ -61,7 +61,7 @@ func _build_ambient() -> void:
 	add_child(fire)
 
 	# Humo que sube de la chimenea.
-	var smoke := _particles(_bg(440, 150), 16, 3.0)
+	var smoke := _particles(_bg(441, 122), 16, 3.0)
 	smoke.emission_rect_extents = Vector2(6, 4) * _scale.x
 	smoke.gravity = Vector2(6, -30) * _scale.y
 	smoke.initial_velocity_min = 4.0 * _scale.y
@@ -71,9 +71,9 @@ func _build_ambient() -> void:
 	smoke.color = Color(0.5, 0.5, 0.52, 0.22)
 	add_child(smoke)
 
-	# Polvo flotando en la luz (junto a la ventana izquierda).
-	var dust := _particles(_bg(90, 130), 34, 6.0)
-	dust.emission_rect_extents = Vector2(60, 90) * _scale.x
+	# Polvo flotando en el haz de luz que cae sobre la balanza (icono central).
+	var dust := _particles(_bg(240, 160), 34, 6.0)
+	dust.emission_rect_extents = Vector2(28, 60) * _scale.x
 	dust.gravity = Vector2(4, -6) * _scale.y
 	dust.initial_velocity_min = 2.0
 	dust.initial_velocity_max = 8.0
@@ -130,8 +130,8 @@ func _schedule_npc(delay: float) -> void:
 
 func _npc_enter() -> void:
 	# Entra por la puerta y camina despacio hacia el mostrador; luego se desvanece.
-	var start := _bg(240, 150)
-	var mid := _bg(240, 215)
+	var start := _bg(240, 134)
+	var mid := _bg(240, 208)
 	_npc.position = start
 	_npc.modulate.a = 0.0
 	var tw := create_tween()
