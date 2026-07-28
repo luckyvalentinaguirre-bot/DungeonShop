@@ -21,6 +21,11 @@ var _rain: CPUParticles2D
 var _snow: CPUParticles2D
 var _info_label: Label
 var _tool_label: Label
+## Clientes que deambulan por la tienda (vida ambiental).
+var _wanderers: Array = []
+## Tormenta: temporizador y brillo del relámpago.
+var _lightning_timer: float = 6.0
+var _flash: float = 0.0
 
 func _ready() -> void:
 	if GameState.economy == null:
@@ -28,8 +33,10 @@ func _ready() -> void:
 	_assignable_ids = _build_assignable_ids()
 	_build_camera()
 	_build_ambient()
+	_build_forge_smoke()
 	_build_weather_nodes()
 	_build_fog()
+	_build_wanderers()
 	_build_ui()
 	_update_weather_visuals()
 	set_process(true)
@@ -38,8 +45,10 @@ func _process(delta: float) -> void:
 	# Ciclo día/noche.
 	GameState.clock.advance(delta)
 	_canvas_modulate.color = GameState.clock.light_color()
-	# Parpadeo de antorchas / humo: redibuja periódicamente.
 	_time_accum += delta
+	_update_wanderers(delta)
+	_update_lightning(delta)
+	# Parpadeo de antorchas, movimiento de clientes, relámpagos: redibuja cada frame.
 	queue_redraw()
 	_refresh_info()
 
@@ -77,6 +86,68 @@ func _build_ambient() -> void:
 	dust.scale_amount_max = 2.5
 	dust.color = Color(1.0, 0.9, 0.7, 0.10)
 	add_child(dust)
+
+func _build_forge_smoke() -> void:
+	# Humo gris que sube desde la forja (primer mostrador que se encuentre).
+	var spot := _first_furniture(ShopLayout.Furniture.COUNTER)
+	if spot == Vector2(-1, -1):
+		return
+	var smoke := CPUParticles2D.new()
+	smoke.position = Vector2(spot.x * TILE + TILE / 2.0, spot.y * TILE + 6)
+	smoke.amount = 22
+	smoke.lifetime = 2.4
+	smoke.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
+	smoke.emission_rect_extents = Vector2(8, 4)
+	smoke.gravity = Vector2(4, -34)
+	smoke.initial_velocity_min = 6.0
+	smoke.initial_velocity_max = 16.0
+	smoke.scale_amount_min = 2.0
+	smoke.scale_amount_max = 5.0
+	smoke.color = Color(0.5, 0.5, 0.52, 0.28)
+	add_child(smoke)
+
+func _build_wanderers() -> void:
+	var colors := [Color(0.8, 0.5, 0.4), Color(0.5, 0.6, 0.8), Color(0.6, 0.75, 0.55), Color(0.75, 0.6, 0.8)]
+	for i in 3:
+		_wanderers.append({
+			"pos": _random_walk_point(),
+			"target": _random_walk_point(),
+			"color": colors[i % colors.size()],
+			"phase": randf() * TAU,
+			"speed": randf_range(28.0, 46.0),
+		})
+
+func _random_walk_point() -> Vector2:
+	var gx := randi() % GameState.layout.width
+	var gy := randi() % GameState.layout.height
+	return Vector2(gx * TILE + TILE / 2.0, gy * TILE + TILE / 2.0)
+
+func _update_wanderers(delta: float) -> void:
+	for w in _wanderers:
+		var pos: Vector2 = w["pos"]
+		var target: Vector2 = w["target"]
+		var to_target := target - pos
+		if to_target.length() < 4.0:
+			w["target"] = _random_walk_point()
+		else:
+			w["pos"] = pos + to_target.normalized() * w["speed"] * delta
+		w["phase"] = float(w["phase"]) + delta * 6.0
+
+func _update_lightning(delta: float) -> void:
+	if _flash > 0.0:
+		_flash = maxf(0.0, _flash - delta * 4.0)
+	if GameState.weather.weather == WeatherSystem.Weather.STORM:
+		_lightning_timer -= delta
+		if _lightning_timer <= 0.0:
+			_flash = 0.6
+			_lightning_timer = randf_range(4.0, 11.0)
+
+func _first_furniture(kind: int) -> Vector2:
+	for y in GameState.layout.height:
+		for x in GameState.layout.width:
+			if GameState.layout.furniture_at(x, y) == kind:
+				return Vector2(x, y)
+	return Vector2(-1, -1)
 
 func _build_weather_nodes() -> void:
 	var grid := _grid_size()
@@ -221,8 +292,12 @@ func _draw() -> void:
 					_draw_shelf(x, y)
 				ShopLayout.Furniture.DECOR:
 					_draw_decor(x, y)
+	_draw_wanderers()
 	_draw_walls()
 	_draw_torches()
+	# Destello de relámpago (tormenta).
+	if _flash > 0.0:
+		draw_rect(Rect2(Vector2.ZERO, _grid_size()), Color(1, 1, 1, _flash * 0.5), true)
 
 func _tile_rect(x: int, y: int) -> Rect2:
 	return Rect2(x * TILE, y * TILE, TILE, TILE)
@@ -262,6 +337,17 @@ func _draw_decor(x: int, y: int) -> void:
 	draw_circle(c + Vector2(0, -2), 14, Color(0.3, 0.55, 0.3))
 	draw_circle(c + Vector2(-6, -8), 8, Color(0.35, 0.6, 0.35))
 	draw_circle(c + Vector2(7, -6), 8, Color(0.32, 0.58, 0.32))
+
+func _draw_wanderers() -> void:
+	for w in _wanderers:
+		var pos: Vector2 = w["pos"]
+		var bob := sin(float(w["phase"])) * 2.0
+		var color: Color = w["color"]
+		# Sombra.
+		draw_circle(pos + Vector2(0, 10), 7.0, Color(0, 0, 0, 0.18))
+		# Cuerpo y cabeza (mini figura cenital).
+		draw_circle(pos + Vector2(0, bob), 9.0, color)
+		draw_circle(pos + Vector2(0, -6 + bob), 5.5, Color(0.95, 0.85, 0.72))
 
 func _draw_walls() -> void:
 	var grid := _grid_size()
