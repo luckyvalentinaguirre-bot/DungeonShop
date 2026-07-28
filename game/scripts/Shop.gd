@@ -97,8 +97,11 @@ func _build_furniture() -> void:
 	_place(FurnitureCatalog.shelf_armor(), Vector2(-470, ROOM.position.y + 320))
 	# Vitrina a la derecha, mas adelante.
 	_place(FurnitureCatalog.vitrina(), Vector2(330, ROOM.position.y + 360))
-	# Mostrador en primer plano (centro).
-	_place(FurnitureCatalog.counter(), Vector2(0, ROOM.end.y - 70))
+	# Mostrador ANCHO en primer plano (POV detras del mostrador): grande y cercano.
+	var counter := _place(FurnitureCatalog.counter(), Vector2(0, ROOM.end.y + 120))
+	counter.scale = Vector2(3.0, 1.7)
+	# Manos del tendero apoyadas en el mostrador (sin rostro; ver punto 4).
+	_build_hands()
 
 func _place(data: FurnitureData, at: Vector2) -> ShopFurniture:
 	var f := ShopFurniture.new()
@@ -106,6 +109,20 @@ func _place(data: FurnitureData, at: Vector2) -> ShopFurniture:
 	_yard.add_child(f)
 	f.setup(data)              # setup tras add_child para que AssetLibrary este listo
 	return f
+
+## Manos del protagonista en primer plano (POV). Van delante de todo (y mayor).
+func _build_hands() -> void:
+	var hands := Sprite2D.new()
+	hands.texture = _tex("hands.svg")
+	hands.centered = true
+	hands.z_index = 100
+	hands.position = Vector2(0, ROOM.end.y + 90)
+	hands.scale = Vector2(1.7, 1.7)
+	_yard.add_child(hands)
+
+func _unhandled_input(e: InputEvent) -> void:
+	if e is InputEventKey and e.pressed and not e.echo and e.keycode == KEY_ESCAPE:
+		get_tree().change_scene_to_file("res://game/scenes/Menu.tscn")
 
 # ------------------------------------------------------------------- faroles
 func _build_lamps() -> void:

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="300" viewBox="0 0 900 300">
+  <!-- antebrazos del tendero (POV, sin rostro) -->
+  <path d="M120 300 Q200 210 360 168" stroke="#6b4a2c" stroke-width="86" fill="none" stroke-linecap="round"/>
+  <path d="M780 300 Q700 210 540 168" stroke="#6b4a2c" stroke-width="86" fill="none" stroke-linecap="round"/>
+  <!-- puños de la camisa -->
+  <path d="M120 300 Q190 230 300 205" stroke="#caa877" stroke-width="90" fill="none" stroke-linecap="round"/>
+  <path d="M780 300 Q710 230 600 205" stroke="#caa877" stroke-width="90" fill="none" stroke-linecap="round"/>
+  <!-- manos (guante de cuero) -->
+  <ellipse cx="372" cy="150" rx="66" ry="46" fill="#7a5636"/>
+  <ellipse cx="528" cy="150" rx="66" ry="46" fill="#7a5636"/>
+  <g stroke="#5c3f26" stroke-width="4" stroke-linecap="round">
+    <line x1="352" y1="112" x2="356" y2="150"/>
+    <line x1="378" y1="108" x2="380" y2="150"/>
+    <line x1="404" y1="114" x2="402" y2="150"/>
+    <line x1="548" y1="112" x2="544" y2="150"/>
+    <line x1="522" y1="108" x2="520" y2="150"/>
+    <line x1="496" y1="114" x2="498" y2="150"/>
+  </g>
+</svg>
