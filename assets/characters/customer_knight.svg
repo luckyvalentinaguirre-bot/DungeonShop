@@ -1,0 +1,24 @@
+<svg width="150" height="190" viewBox="0 0 150 190" xmlns="http://www.w3.org/2000/svg">
+  <!-- Placeholder de guerrero/guardia. Sustituir por arte final. -->
+  <ellipse cx="75" cy="180" rx="42" ry="7" fill="#00000033"/>
+  <!-- cuerpo (armadura) -->
+  <path d="M46 92 Q75 82 104 92 L110 172 Q75 180 40 172 Z" fill="#7f8a97"/>
+  <!-- peto -->
+  <path d="M60 96 Q75 92 90 96 L86 140 Q75 146 64 140 Z" fill="#9aa6b3"/>
+  <!-- hombreras -->
+  <circle cx="48" cy="98" r="12" fill="#6b7681"/>
+  <circle cx="102" cy="98" r="12" fill="#6b7681"/>
+  <!-- brazos -->
+  <path d="M44 104 L36 146 L46 150 L56 110 Z" fill="#6b7681"/>
+  <path d="M106 104 L114 146 L104 150 L94 110 Z" fill="#6b7681"/>
+  <!-- cabeza -->
+  <circle cx="75" cy="58" r="22" fill="#e8c39a"/>
+  <!-- casco -->
+  <path d="M52 56 Q52 30 75 30 Q98 30 98 56 L98 50 Q75 40 52 50 Z" fill="#6b7681"/>
+  <rect x="70" y="46" width="10" height="18" fill="#4f5964"/>
+  <!-- ojos -->
+  <circle cx="67" cy="60" r="2.6" fill="#3a2a1e"/>
+  <circle cx="83" cy="60" r="2.6" fill="#3a2a1e"/>
+  <!-- boca seria -->
+  <path d="M68 69 L82 69" stroke="#3a2a1e" stroke-width="2.2" stroke-linecap="round"/>
+</svg>

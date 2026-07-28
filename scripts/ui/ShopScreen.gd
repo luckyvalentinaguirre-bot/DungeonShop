@@ -13,6 +13,7 @@ var _offer_btn: Button
 var _stock_box: VBoxContainer
 var _log: RichTextLabel
 
+var _character: CharacterView
 var _current: Customer
 var _controller: CustomerController
 var _selected_slot: ItemInstance
@@ -90,6 +91,11 @@ func _build_counter_panel() -> Control:
 	panel.add_child(box)
 
 	box.add_child(UiFactory.label("Mostrador", 22, UiFactory.COL_ACCENT))
+
+	_character = CharacterView.new()
+	_character.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	box.add_child(_character)
+
 	_customer_label = UiFactory.label("No hay nadie en el mostrador.\nPulsa «Siguiente cliente».", 16)
 	box.add_child(_customer_label)
 
@@ -157,6 +163,7 @@ func _on_next_customer() -> void:
 		_current = customer
 		_controller = CustomerController.new(customer)
 		_controller.present_need()
+		_character.show_character(_sprite_for(customer))
 		_customer_label.text = "%s (ánimo %.0f%%)\nQuiere: %s de calidad ≥%d\nPresupuesto: %d coronas" % [
 			customer.display_name(), customer.mood.value * 100.0,
 			_cat_name(customer.need.category), customer.need.min_quality, customer.need.budget,
@@ -164,14 +171,17 @@ func _on_next_customer() -> void:
 		_log_line("Llega [b]%s[/b] al mostrador." % customer.display_name())
 
 func _resolve_shelf(customer: Customer) -> void:
+	_character.show_character(_sprite_for(customer))
 	var offers := _offers_from_stock()
 	var result := ShelfPurchaseResolver.resolve(customer.need, offers, customer.wallet, GameState.player_wallet, GameState.economy.demand)
 	if result.bought:
 		GameState.stock.remove(result.item.data.id, 1)
 		_log_line("[color=#8fd08a]%s cogió %s de la estantería y pagó %d coronas.[/color]" % [customer.display_name(), result.item.data.display_name, result.price])
+		_character.play_happy()
 		_refresh_stock()
 	else:
 		_log_line("%s miró la estantería y se fue sin comprar (%s)." % [customer.display_name(), _cat_name(customer.need.category)])
+		_character.play_sad()
 
 func _offers_from_stock() -> Array:
 	var offers: Array = []
@@ -204,11 +214,13 @@ func _on_offer() -> void:
 	if result.sold:
 		GameState.stock.remove(_selected_slot.data.id, 1)
 		_log_line("[color=#8fd08a]Vendiste %s a %s por %d coronas.[/color]" % [_selected_slot.data.display_name, _current.display_name(), _offer_price])
+		_character.play_happy()
 		_end_visit()
 	elif result.reason == "wrong_item":
 		_log_line("A %s no le sirve %s (quería %s)." % [_current.display_name(), _selected_slot.data.display_name, _cat_name(_current.need.category)])
 	else:
 		_log_line("[color=#d98f6a]%s rechazó la oferta (%s). Se marcha.[/color]" % [_current.display_name(), result.reason])
+		_character.play_sad()
 		_end_visit()
 
 func _end_visit() -> void:
@@ -255,6 +267,16 @@ func _log_line(text: String) -> void:
 func _hsep() -> Control:
 	var s := HSeparator.new()
 	return s
+
+func _sprite_for(customer: Customer) -> String:
+	var base := "res://assets/characters/"
+	match customer.data.faction:
+		GameEnums.Faction.CROWN, GameEnums.Faction.GUILD:
+			return base + "customer_knight.svg"
+		GameEnums.Faction.ARCANE:
+			return base + "customer_mage.svg"
+		_:
+			return base + "customer_villager.svg"
 
 func _cat_name(category: int) -> String:
 	match category:

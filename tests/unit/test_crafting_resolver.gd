@@ -71,3 +71,9 @@ func test_no_defect_when_chance_zero() -> void:
 	var mat := _material([_trait(0.0, 0.0, {})])
 	var r := CraftingResolver.craft(_recipe(&"weapon_short_sword"), _two(mat), null, _db(), _rng())
 	assert_false(r.output.defect, "con probabilidad de defecto 0 nunca sale defectuoso")
+
+func test_skill_bonus_raises_quality() -> void:
+	var mat := _material([_trait(0.0, 0.0, {})])
+	var no_skill := CraftingResolver.craft(_recipe(&"weapon_short_sword"), _two(mat), null, _db(), _rng(), 0.0, 0.0)
+	var skilled := CraftingResolver.craft(_recipe(&"weapon_short_sword"), _two(mat), null, _db(), _rng(), 2.0, 0.0)
+	assert_true(skilled.quality >= no_skill.quality, "la habilidad de herrería mejora la calidad (mismo seed)")

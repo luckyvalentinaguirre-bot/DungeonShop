@@ -7,10 +7,12 @@ extends Node
 
 signal gold_changed(amount: int)
 signal day_changed(day: int)
+signal skill_leveled(skill_id: StringName, new_level: int)
 
 var economy: EconomySystem
 var item_db: ItemDatabase
 var crafting: CraftingLibrary
+var skills: PlayerSkills
 var player_wallet: WalletComponent
 ## Stock de la tienda (almacén + estantería unificados en esta primera versión).
 var stock: Inventory
@@ -28,6 +30,8 @@ func new_game() -> void:
 
 	crafting = CraftingLibrary.new()
 	crafting.load_all()
+
+	skills = PlayerSkills.new()
 
 	economy = EconomySystem.new()
 	economy.name = "EconomySystem"
@@ -61,13 +65,24 @@ func spawn_customer() -> Customer:
 ## Fabrica un objeto con la receta y los materiales elegidos. Si tiene éxito,
 ## consume los materiales del stock y añade el resultado. Ver docs/systems/05_Crafting.md.
 func craft(recipe: RecipeData, materials: Array) -> CraftingResolver.Result:
+	# Requisito de habilidad: no puedes fabricar lo que aún no sabes hacer.
+	if recipe.required_skill_id != &"" and skills.level_of(recipe.required_skill_id) < recipe.required_skill_level:
+		var blocked := CraftingResolver.Result.new()
+		blocked.reason = "skill_too_low"
+		return blocked
+
 	var station := crafting.station(recipe.station_id) if crafting != null else null
-	var result := CraftingResolver.craft(recipe, materials, station, item_db, rng)
+	var qbonus := skills.quality_bonus(PlayerSkills.SMITHING)
+	var dred := skills.defect_reduction(PlayerSkills.SMITHING)
+	var result := CraftingResolver.craft(recipe, materials, station, item_db, rng, qbonus, dred)
 	if result.success:
 		for m in materials:
 			if m != null and m.data != null:
 				stock.remove(m.data.id, m.quantity)
 		stock.add(result.output)
+		# Aprender haciendo: cada fabricación da experiencia de herrería.
+		if skills.add_xp(PlayerSkills.SMITHING, 25):
+			skill_leveled.emit(PlayerSkills.SMITHING, skills.level_of(PlayerSkills.SMITHING))
 	return result
 
 ## Avanza una jornada: la demanda revierte y (cada semana) fluctúa el mercado.

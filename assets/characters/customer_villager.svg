@@ -1,0 +1,21 @@
+<svg width="150" height="190" viewBox="0 0 150 190" xmlns="http://www.w3.org/2000/svg">
+  <!-- Placeholder de aldeano/a. Sustituir por arte final (ver docs/ArtDirection.md). -->
+  <ellipse cx="75" cy="180" rx="42" ry="7" fill="#00000033"/>
+  <!-- cuerpo (túnica) -->
+  <path d="M48 92 Q75 84 102 92 L112 172 Q75 180 38 172 Z" fill="#8c6b46"/>
+  <!-- cinturón -->
+  <rect x="42" y="128" width="66" height="8" rx="3" fill="#5a3f28"/>
+  <!-- brazos -->
+  <path d="M48 96 L34 140 L44 144 L58 104 Z" fill="#7a5c3c"/>
+  <path d="M102 96 L116 140 L106 144 L92 104 Z" fill="#7a5c3c"/>
+  <!-- cuello y cabeza -->
+  <rect x="68" y="70" width="14" height="14" fill="#e8c39a"/>
+  <circle cx="75" cy="58" r="22" fill="#f0cda3"/>
+  <!-- pelo -->
+  <path d="M53 54 Q56 32 75 32 Q94 32 97 54 Q90 44 75 44 Q60 44 53 54 Z" fill="#5a3f28"/>
+  <!-- ojos -->
+  <circle cx="67" cy="58" r="2.6" fill="#3a2a1e"/>
+  <circle cx="83" cy="58" r="2.6" fill="#3a2a1e"/>
+  <!-- sonrisa -->
+  <path d="M67 66 Q75 72 83 66" stroke="#3a2a1e" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+</svg>

@@ -17,6 +17,11 @@ extends Resource
 ## Probabilidad base de defecto (0..1) antes de rasgos y estación.
 @export var base_defect_chance: float = 0.05
 
+## Habilidad exigida para fabricar esta receta (&"" = ninguna) y nivel mínimo.
+## Ver PlayerSkills y docs/systems/06_Progression.md.
+@export var required_skill_id: StringName = &""
+@export var required_skill_level: int = 0
+
 ## Ranuras de entrada, como dos arrays paralelos (evita diccionarios en el .tres):
 ## required_categories[i] = categoría exigida (GameEnums.Category),
 ## required_quantities[i] = cuántas unidades de esa categoría.

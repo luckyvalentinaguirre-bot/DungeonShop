@@ -150,6 +150,15 @@ mínimas + scripts de pantalla), robusta y convertible a escenas de editor para 
 - [x] `CraftingScreen`: elige receta + materiales del stock y fabrica; muestra en vivo
       calidad, defecto y perfil según los materiales. Accesible desde la tienda.
 
+**Incremento 3 — Personajes 2D animados + habilidades ✅**
+- [x] `CharacterView`: personaje 2D con sprite (placeholder SVG) y animaciones por
+      código (entrar, respirar, alegrarse, enfadarse). El cliente aparece en el
+      mostrador y reacciona a la venta. Arte final = sustituir los SVG.
+- [x] `PlayerSkills` (aprender haciendo): la herrería sube al fabricar, mejora la
+      calidad y reduce defectos; las recetas pueden exigir un nivel mínimo.
+- [x] Integrado en `GameState.craft()` y en `CraftingScreen` (nivel, requisito,
+      subida de nivel); tests de habilidades y de fabricación con habilidad.
+
 **Pendiente (próximos incrementos de la Fase 7):**
 - [ ] Panel de inventario/almacén con arrastrar-soltar.
 - [ ] Sistema de diálogo ([systems/10](systems/10_Dialogue.md)) para clientes recurrentes.

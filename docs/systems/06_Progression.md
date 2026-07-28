@@ -57,9 +57,14 @@ Desbloqueables a mediano plazo para delegar:
 
 ## 6. Habilidades/profesiones del jugador 🟡
 
-`resources/skills/` y `resources/professions/` definen mejoras pasivas/activas que
-el jugador desbloquea (mejor regateo, menos defectos, más aforo). Se ganan por uso
-o por hitos. 🔴 Definir si hay árbol de habilidades o mejoras lineales (Fase 6).
+Modelo **"aprender haciendo"** (implementado en `PlayerSkills`, Fase 7): cada
+habilidad tiene nivel y experiencia que sube al usarla. La primera implementada es
+la **herrería**: al fabricar gana experiencia, y su nivel **mejora la calidad y
+reduce los defectos**; las recetas pueden exigir un **nivel mínimo** (gating). El
+resto de habilidades (mejor regateo, más aforo…) seguirán este mismo patrón.
+🟡 Mejoras lineales por nivel en v1.0; un árbol de habilidades queda como posible
+ampliación. Los umbrales viven en código y se moverán a `resources/config/` al
+calibrar.
 
 ## 7. Curva y ritmo 🟡
 

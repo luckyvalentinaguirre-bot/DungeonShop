@@ -4,6 +4,7 @@ extends Control
 ## los materiales elegidos determinan la calidad/perfil. Ver docs/systems/05_Crafting.md.
 
 var _gold_label: Label
+var _skill_label: Label
 var _recipe_box: VBoxContainer
 var _materials_box: VBoxContainer
 var _selection_label: Label
@@ -21,6 +22,7 @@ func _ready() -> void:
 	UiFactory.background(self)
 	_build_ui()
 	_refresh_all()
+	GameState.skill_leveled.connect(_on_skill_leveled)
 
 func _build_ui() -> void:
 	var margin := MarginContainer.new()
@@ -39,6 +41,8 @@ func _build_ui() -> void:
 	hud_row.add_child(UiFactory.label("Fabricación", 22, UiFactory.COL_ACCENT))
 	_gold_label = UiFactory.label("Oro: 0", 18)
 	hud_row.add_child(_gold_label)
+	_skill_label = UiFactory.label("Herrería: Nv 1", 18, UiFactory.COL_ARCANE)
+	hud_row.add_child(_skill_label)
 	var spacer := Control.new()
 	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hud_row.add_child(spacer)
@@ -112,9 +116,20 @@ func _build_materials_panel() -> Control:
 # ------------------------------------------------------------------------ lógica
 func _refresh_all() -> void:
 	_gold_label.text = "Oro: %d" % GameState.gold()
+	_refresh_skill_label()
 	_refresh_recipes()
 	_refresh_materials()
 	_refresh_selection()
+
+func _refresh_skill_label() -> void:
+	var lvl := GameState.skills.level_of(PlayerSkills.SMITHING)
+	var xp := GameState.skills.xp_of(PlayerSkills.SMITHING)
+	var next := GameState.skills.xp_to_next(PlayerSkills.SMITHING)
+	_skill_label.text = "Herrería: Nv %d (%d/%d)" % [lvl, xp, next]
+
+func _on_skill_leveled(_skill_id: StringName, new_level: int) -> void:
+	_log_line("[color=#4fd0c8]¡Tu herrería sube al nivel %d! Mejores objetos y menos defectos.[/color]" % new_level)
+	_refresh_skill_label()
 
 func _refresh_recipes() -> void:
 	for c in _recipe_box.get_children():
@@ -132,8 +147,12 @@ func _refresh_recipes() -> void:
 func _select_recipe(recipe: RecipeData) -> void:
 	_selected_recipe = recipe
 	_clear_selection()
-	_info_label.text = "Receta: %s\nNecesita: %s\nProduce: %s" % [
-		recipe.display_name, _slots_text(recipe), _output_name(recipe),
+	var skill_line := ""
+	if recipe.required_skill_id != &"":
+		var have := GameState.skills.level_of(recipe.required_skill_id)
+		skill_line = "\nHerrería requerida: Nv %d (tienes Nv %d)" % [recipe.required_skill_level, have]
+	_info_label.text = "Receta: %s\nNecesita: %s\nProduce: %s%s" % [
+		recipe.display_name, _slots_text(recipe), _output_name(recipe), skill_line,
 	]
 
 func _refresh_materials() -> void:
@@ -188,6 +207,8 @@ func _on_craft() -> void:
 		_log_line("[color=#8fd08a]Fabricaste %s (calidad %d)%s. Perfil: %s[/color]" % [
 			out.data.display_name, out.quality, defect_txt, str(out.attributes),
 		])
+	elif result.reason == "skill_too_low":
+		_log_line("[color=#d98f6a]Aún no tienes herrería suficiente para esta receta.[/color]")
 	else:
 		_log_line("[color=#d98f6a]No se pudo fabricar: %s[/color]" % result.reason)
 	_clear_selection()

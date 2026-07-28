@@ -10,5 +10,7 @@ output_item_id = &"weapon_short_sword"
 station_id = &"forge"
 base_quality_score = 2.0
 base_defect_chance = 0.05
+required_skill_id = &"smithing"
+required_skill_level = 1
 required_categories = [5]
 required_quantities = [2]

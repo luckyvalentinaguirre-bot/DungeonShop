@@ -1,0 +1,24 @@
+<svg width="150" height="190" viewBox="0 0 150 190" xmlns="http://www.w3.org/2000/svg">
+  <!-- Placeholder de mago/a. Sustituir por arte final. -->
+  <ellipse cx="75" cy="180" rx="42" ry="7" fill="#00000033"/>
+  <!-- túnica -->
+  <path d="M50 96 Q75 86 100 96 L114 174 Q75 182 36 174 Z" fill="#3f3a6b"/>
+  <!-- detalle arcano -->
+  <path d="M75 104 L82 128 L75 152 L68 128 Z" fill="#4fd0c8"/>
+  <!-- brazos -->
+  <path d="M50 100 L38 142 L48 146 L60 108 Z" fill="#332e57"/>
+  <path d="M100 100 L112 142 L102 146 L90 108 Z" fill="#332e57"/>
+  <!-- bastón -->
+  <rect x="108" y="70" width="5" height="96" rx="2" fill="#7a5c3c"/>
+  <circle cx="110" cy="66" r="8" fill="#4fd0c8"/>
+  <!-- cabeza -->
+  <circle cx="75" cy="60" r="21" fill="#e8c39a"/>
+  <!-- sombrero puntiagudo -->
+  <path d="M50 52 Q75 8 100 52 Q75 42 50 52 Z" fill="#332e57"/>
+  <ellipse cx="75" cy="52" rx="30" ry="7" fill="#3f3a6b"/>
+  <!-- ojos -->
+  <circle cx="68" cy="62" r="2.4" fill="#3a2a1e"/>
+  <circle cx="82" cy="62" r="2.4" fill="#3a2a1e"/>
+  <!-- sonrisa leve -->
+  <path d="M69 69 Q75 73 81 69" stroke="#3a2a1e" stroke-width="2" fill="none" stroke-linecap="round"/>
+</svg>

@@ -15,7 +15,7 @@ class Result:
 
 ## Fabrica a partir de una receta, unos materiales elegidos, una estación, el
 ## catálogo (para resolver el objeto de salida) y un RNG sembrado.
-static func craft(recipe: RecipeData, materials: Array, station: CraftingStationData, database: ItemDatabase, rng: RandomNumberGenerator) -> Result:
+static func craft(recipe: RecipeData, materials: Array, station: CraftingStationData, database: ItemDatabase, rng: RandomNumberGenerator, skill_quality_bonus: float = 0.0, skill_defect_reduction: float = 0.0) -> Result:
 	var r := Result.new()
 	if recipe == null:
 		r.reason = "no_recipe"
@@ -43,9 +43,9 @@ static func craft(recipe: RecipeData, materials: Array, station: CraftingStation
 	var station_dreduction: float = station.defect_reduction() if station != null else 0.0
 
 	var jitter: float = rng.randf_range(-0.25, 0.25)
-	var score: float = recipe.base_quality_score + quality_bonus + station_qbonus + jitter
+	var score: float = recipe.base_quality_score + quality_bonus + station_qbonus + skill_quality_bonus + jitter
 	var quality: int = QualityCalculator.quality_from_score(score)
-	var dchance: float = QualityCalculator.defect_chance(recipe.base_defect_chance, defect_delta, station_dreduction)
+	var dchance: float = QualityCalculator.defect_chance(recipe.base_defect_chance, defect_delta, station_dreduction + skill_defect_reduction)
 	var defect: bool = rng.randf() < dchance
 
 	var base_data: ItemData = database.get_item(recipe.output_item_id) if database != null else null
