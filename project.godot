@@ -1,0 +1,61 @@
+; Engine configuration file.
+; Dungeon Shop — Godot 4.x project
+;
+; This file defines project-wide settings, autoloads (singletons/managers),
+; input map and rendering configuration. Autoloads are intentionally the ONLY
+; global state in the project; every other system is composed from nodes and
+; Resources (see docs/systems/00_Architecture.md).
+
+config_version=5
+
+[application]
+
+config/name="Dungeon Shop"
+config/description="A cozy medieval shop-keeping game. You are not the hero — you run the store."
+run/main_scene="res://scenes/main_menu/MainMenu.tscn"
+config/features=PackedStringArray("4.3", "Forward Plus")
+config/icon="res://assets/icons/icon.svg"
+
+[autoload]
+
+; --- Core managers (order matters: dependencies first) ---
+EventBus="*res://scripts/managers/EventBus.gd"
+GameConfig="*res://scripts/managers/GameConfig.gd"
+SaveManager="*res://scripts/save/SaveManager.gd"
+GameState="*res://scripts/managers/GameState.gd"
+AudioManager="*res://scripts/audio/AudioManager.gd"
+SceneRouter="*res://scripts/managers/SceneRouter.gd"
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
+renderer/rendering_method="forward_plus"
+
+[input]
+
+; Input actions are documented in docs/systems/13_Controls.md.
+; Declared here so scripts can reference them before UI exists.
+ui_interact={
+"deadzone": 0.5,
+"events": []
+}
+pause_game={
+"deadzone": 0.5,
+"events": []
+}
+quick_save={
+"deadzone": 0.5,
+"events": []
+}
+
+[localization]
+
+; See localization/ — CSV-based translations loaded at boot.
+locale/fallback="en"

@@ -1,0 +1,25 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+/builds/
+/export/
+*.import
+
+# Godot exported binaries
+*.exe
+*.pck
+*.zip
+*.dmg
+*.apk
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Local player saves should NOT be committed (except the .gitkeep placeholder)
+saves/*
+!saves/.gitkeep
+
+# Secrets / local config
+export_presets.cfg

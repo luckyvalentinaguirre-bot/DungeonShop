@@ -1,0 +1,115 @@
+# Roadmap — Plan de desarrollo por fases
+
+> Regla de oro: **no se avanza de fase hasta cerrar la anterior.** Cada fase tiene
+> criterios de "hecho" (DoD) verificables. La Fase 1 es 100% documentación y
+> esqueleto; el código de juego empieza en la Fase 3.
+
+---
+
+## Fase 1 — Arquitectura completa 🟡 (en curso)
+
+**Objetivo:** dejar todo el diseño y la estructura listos antes de programar.
+
+**Entregables:**
+- [x] Árbol de carpetas completo (`assets/`, `scripts/`, `scenes/`, `resources/`, …).
+- [x] `project.godot` con autoloads, display, input e i18n base.
+- [x] `.gitignore` de Godot.
+- [x] Game Design Document ([GameDesignDocument.md](GameDesignDocument.md)).
+- [x] Historia y lore ([Lore.md](Lore.md)).
+- [x] Documento de arquitectura técnica ([systems/00_Architecture.md](systems/00_Architecture.md)).
+- [x] Docs de los 13 sistemas (economía, clientes, héroes, reputación, fabricación,
+      progresión, eventos, guardado, inventario, diálogo, misiones, logros, controles).
+- [x] Dirección de arte y audio.
+- [x] Catálogos de contenido inicial (items, NPCs).
+
+**Definition of Done:** un desarrollador nuevo puede leer `docs/` y entender qué se
+va a construir, cómo se organiza el código, y qué preguntas siguen abiertas. Ningún
+sistema de juego implementado todavía.
+
+---
+
+## Fase 2 — Diseño del mundo
+
+**Objetivo:** cerrar el contenido narrativo y de mundo.
+- Cerrar preguntas 🔴 de [Lore](Lore.md) (antecesor, peso narrativo, nombres).
+- Definir facciones enfrentadas ([Reputation](systems/04_Reputation.md)).
+- Elenco definitivo de NPCs con arcos ([NPCs](NPCs.md)).
+- Mapa del reino y orden de desbloqueo de localizaciones.
+- **DoD:** biblia de mundo/narrativa aprobada; sin 🔴 críticos de mundo.
+
+---
+
+## Fase 3 — Sistema de economía
+
+**Objetivo:** primer código de juego. Motor económico funcional y testeado.
+- Implementar `EconomyConfig`, `PriceCalculator`, `DemandModel`, `MarketSystem`,
+  `TransactionResolver`, `WalletComponent` (ver [systems/01](systems/01_Economy.md)).
+- Tests unitarios de precios/transacciones/demanda (GUT).
+- Herramienta de depuración para inspeccionar el mercado.
+- **DoD:** se puede comprar material y vender objeto por consola/escena de prueba,
+  con precios dinámicos, todo cubierto por tests. Sin UI aún.
+
+---
+
+## Fase 4 — Clientes
+
+- `CustomerData`, `CustomerNeed`, `CustomerSpawner`, `CustomerController`,
+  `HaggleResolver`, `MoodComponent` (ver [systems/02](systems/02_Customers.md)).
+- Resolver la mecánica de negociación (🔴).
+- **DoD:** clientes llegan, piden y compran contra el motor económico; testeado.
+
+---
+
+## Fase 5 — Objetos
+
+- `ItemData`, `ItemInstance`, taxonomía y catálogo inicial ([Items](Items.md)).
+- Sistema de inventario ([systems/09](systems/09_Inventory.md)): `Inventory`,
+  `InventoryComponent`.
+- **DoD:** objetos definidos como Resources, almacenables y vendibles; testeado.
+
+---
+
+## Fase 6 — Fabricación
+
+- `RecipeData`, `MaterialTrait`, estaciones, `CraftingResolver`,
+  `QualityCalculator` ([systems/05](systems/05_Crafting.md)).
+- Rasgos de material y calidad/defectos.
+- **DoD:** se fabrica un objeto combinando materiales con rasgos; testeado.
+
+---
+
+## Fase 7 — Interfaz
+
+- Escenas y UI de tienda, mostrador, inventario, fabricación, mercado, diálogo, HUD.
+- Sistema de diálogo ([systems/10](systems/10_Dialogue.md)) y misiones/tutorial
+  ([systems/11](systems/11_Quests.md)).
+- Input map final y soporte de mando ([systems/13](systems/13_Controls.md)).
+- **DoD:** el bucle central es jugable con ratón de principio a fin.
+
+---
+
+## Fase 8 — Guardado
+
+- `SaveManager`, serialización, autosave, versionado, migraciones
+  ([systems/08](systems/08_Save.md)).
+- Preparar compatibilidad con Steam Cloud.
+- **DoD:** guardar/cargar cualquier estado de partida de forma robusta; tests de
+  ida y vuelta.
+
+---
+
+## Fase 9 — Pulido
+
+- Reputación, héroes, eventos y logros completos e integrados.
+- Arte y audio finales, *juice*, accesibilidad, localización.
+- Balance con playtesting; preparación de build de Steam.
+- **DoD:** experiencia completa, estable y pulida, lista para publicar.
+
+---
+
+## Reglas de proceso
+
+- Cada fase abre cerrando los 🔴 relevantes del/los documento(s) de su sistema.
+- Nada entra si no refuerza un pilar del GDD (§2) — control de *feature creep*.
+- El código sigue [systems/00_Architecture.md](systems/00_Architecture.md): scripts
+  < 200 líneas, composición, datos en Resources, testeable sin UI, documentado.
