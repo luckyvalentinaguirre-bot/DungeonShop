@@ -7,6 +7,7 @@ extends Node
 
 const MAIN_MENU := "res://scenes/main_menu/MainMenu.tscn"
 const SHOP := "res://scenes/shop/Shop.tscn"
+const SHOP_COUNTER := "res://scenes/shop/ShopCounter.tscn"
 const SHOP_WORLD := "res://scenes/shop/ShopWorld.tscn"
 const CRAFTING := "res://scenes/crafting/CraftingScreen.tscn"
 
@@ -15,6 +16,10 @@ func goto(path: String) -> void:
 
 func goto_shop() -> void:
 	goto(SHOP)
+
+## Gameplay principal: la vista detrás del mostrador (tienda abierta).
+func goto_counter() -> void:
+	goto(SHOP_COUNTER)
 
 func goto_main_menu() -> void:
 	goto(MAIN_MENU)

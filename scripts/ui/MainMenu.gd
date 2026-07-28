@@ -35,11 +35,11 @@ func _ready() -> void:
 
 func _on_new_game() -> void:
 	GameState.new_game()
-	SceneRouter.goto_shop()
+	SceneRouter.goto_counter()
 
 func _on_continue() -> void:
 	if SaveManager.load_game(1):
-		SceneRouter.goto_shop()
+		SceneRouter.goto_counter()
 
 func _on_quit() -> void:
 	get_tree().quit()

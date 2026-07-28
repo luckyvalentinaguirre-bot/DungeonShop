@@ -273,8 +273,8 @@ func _build_ui() -> void:
 	tools.add_child(_tool_button("Borrar", Tool.ERASE))
 	_tool_label = UiFactory.label("Herramienta: Seleccionar", 14, UiFactory.COL_ARCANE)
 	tools.add_child(_tool_label)
-	var back := UiFactory.button("Volver")
-	back.pressed.connect(func() -> void: SceneRouter.goto_shop())
+	var back := UiFactory.button("Abrir tienda")
+	back.pressed.connect(func() -> void: SceneRouter.goto_counter())
 	tools.add_child(back)
 
 func _tool_button(text: String, tool_id: int) -> Button:

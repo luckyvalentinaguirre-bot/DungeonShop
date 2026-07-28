@@ -174,6 +174,15 @@ tienda donde aplica), según la [Visión del juego](GameVision.md):
       investigación (`ResearchSystem`), decoración (`DecorationData`).
 - [x] ~35 archivos de tests en total.
 
+**Estructura de juego en dos modos ✅** (decisión del diseñador)
+- **Tienda abierta = gameplay normal:** vista **detrás del mostrador**
+  (`scenes/shop/ShopCounter.tscn`) — ves toda la tienda (pared con estanterías,
+  puerta, ventana con el cielo según la hora, cartel) y atiendes a los clientes que
+  se acercan; con día/noche. Es la escena a la que entra "Nueva partida"/"Continuar".
+- **Cerrar tienda = vista top-down:** `scenes/shop/ShopWorld.tscn` para gestionar la
+  distribución (colocar muebles, asignar productos). Se cambia con "Cerrar tienda" ↔
+  "Abrir tienda".
+
 **Incremento 5 — Base VISUAL top-down ✅**
 - [x] **Vista cenital (top-down)** de la tienda renderizada desde `ShopLayout`
       (`scenes/shop/ShopWorld.tscn`): suelo, paredes, mostrador, estantes con su
