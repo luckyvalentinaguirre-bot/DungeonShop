@@ -18,3 +18,6 @@ extends Resource
 @export var stackable: bool = false
 ## Tamaño máximo de pila cuando es apilable.
 @export var max_stack: int = 1
+## Etiquetas libres para adecuación con héroes/clientes (p. ej. &"ligero",
+## &"arcano"). Se explota en la Fase 3-héroes/Fase 6. Ver docs/systems/03_Heroes.md.
+@export var tags: Array = []

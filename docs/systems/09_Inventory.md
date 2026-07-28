@@ -70,6 +70,19 @@ y su **presentación** afecta a demanda/ánimo (gancho de progresión/decoració
 ## 9. Preguntas abiertas
 
 - 🔴 ¿Inventario por *slots* con cuadrícula visible (estilo Moonlighter) o por lista
-  con capacidad numérica? Afecta a UI y sensación. Recomendado: cuadrícula para
-  almacén/estantería (táctil y *cozy*), lista para materiales a granel.
-- 🟡 Reglas exactas de compatibilidad de apilado por estado.
+  con capacidad numérica? Afecta a la **UI** (se decide en Fase 7); el **modelo** ya
+  soporta ambas (capacidad en slots + apilado).
+- 🟡 Reglas exactas de compatibilidad de apilado por estado (hoy: mismo `id` y
+  apilable; los objetos con estado único no se apilan).
+
+## 10. Estado de implementación (Fase 5) ✅
+
+Implementado y cubierto por tests: `Inventory` (puro: add/remove/count/has/
+move_instance_to, capacidad y apilado con max_stack), `InventoryComponent` (Node,
+composición), `ItemDatabase` (carga el catálogo `.tres` de `resources/items/`) y
+`ItemData` ampliado con `tags`. Catálogo semilla en `resources/items/` (hierro,
+poción de curación, espada corta, antorcha, jubón de cuero).
+**Conexión del modelo híbrido:** la estantería del autoservicio ya se surte de un
+`Inventory` real y descuenta las unidades vendidas (ver `scenes/dev/ShopDayDemo.tscn`).
+**Pendiente:** `restore_state` con `ItemDatabase` se integra en la Fase 8 (guardado);
+UI de cuadrícula/arrastrar-soltar en la Fase 7.

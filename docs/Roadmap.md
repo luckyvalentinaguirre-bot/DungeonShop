@@ -93,12 +93,21 @@ godot --headless --path . --script res://tests/run_tests.gd   # todos los tests
 
 ---
 
-## Fase 5 — Objetos
+## Fase 5 — Objetos ✅ (completada)
 
-- `ItemData`, `ItemInstance`, taxonomía y catálogo inicial ([Items](Items.md)).
-- Sistema de inventario ([systems/09](systems/09_Inventory.md)): `Inventory`,
-  `InventoryComponent`.
-- **DoD:** objetos definidos como Resources, almacenables y vendibles; testeado.
+- [x] `ItemData` (ampliado con `tags`), `ItemInstance`, catálogo semilla como
+      Resources en `resources/items/` + `ItemDatabase` que lo carga ([Items](Items.md)).
+- [x] Sistema de inventario ([systems/09](systems/09_Inventory.md)): `Inventory`
+      (apilado, capacidad, mover) e `InventoryComponent`.
+- [x] Estantería del autoservicio conectada a un `Inventory` real (descuenta stock).
+- [x] 2 archivos de tests nuevos (inventario, catálogo).
+- **DoD:** ✅ objetos definidos como Resources, almacenables y vendibles, testeado.
+
+### Cómo probarlo (Godot 4.3+)
+```bash
+godot --headless --path . res://scenes/dev/ShopDayDemo.tscn   # jornada con estantería real
+godot --headless --path . --script res://tests/run_tests.gd   # todos los tests
+```
 
 ---
 

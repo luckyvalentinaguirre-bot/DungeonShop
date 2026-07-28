@@ -67,7 +67,14 @@ material_traits : Array[MaterialTrait]  (solo materiales)
 tags          : Array[StringName]  (para adecuación con héroes/clientes)
 ```
 
-## 6. Preguntas abiertas
+## 6. Estado de implementación (Fase 5) ✅
+
+`ItemData` (con `tags`) e `ItemInstance` implementados; catálogo semilla como `.tres`
+en `resources/items/` (hierro, poción de curación, espada corta, antorcha, jubón de
+cuero) cargado por `ItemDatabase`. Los campos `icon` y `material_traits` se añadirán
+en la fase de arte y en la Fase 6 (fabricación) respectivamente.
+
+## 7. Preguntas abiertas
 
 - 🔴 Nº de niveles de rareza y calidad definitivos (afecta a economía y drops).
 - 🔴 ¿Durabilidad/reparación entra en v1.0 o se pospone? Añade profundidad pero también fricción.

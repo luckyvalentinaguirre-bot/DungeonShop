@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/ItemData.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"weapon_short_sword"
+display_name = "Espada corta"
+category = 0
+base_value = 40
+rarity = 0
+stackable = false
+max_stack = 1
+tags = [&"cuerpo_a_cuerpo", &"ligero"]

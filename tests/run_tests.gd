@@ -21,6 +21,9 @@ const TEST_SCRIPTS: Array = [
 	preload("res://tests/unit/test_customer_controller.gd"),
 	preload("res://tests/unit/test_shelf_purchase.gd"),
 	preload("res://tests/unit/test_shop_queue.gd"),
+	# Objetos e inventario (Fase 5)
+	preload("res://tests/unit/test_inventory.gd"),
+	preload("res://tests/unit/test_item_database.gd"),
 ]
 
 func _initialize() -> void:

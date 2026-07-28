@@ -28,8 +28,8 @@ Estamos en **desarrollo por fases**. No se avanza de fase hasta cerrar la anteri
 | 2 | Diseño del mundo | ✅ Completada |
 | 3 | Sistema de economía | ✅ Completada (primer código + tests) |
 | 4 | Clientes | ✅ Completada (modelo híbrido + tests) |
-| 5 | Objetos | ⬜ Pendiente (próxima) |
-| 6 | Fabricación | ⬜ Pendiente |
+| 5 | Objetos | ✅ Completada (inventario + catálogo + tests) |
+| 6 | Fabricación | ⬜ Pendiente (próxima) |
 | 7 | Interfaz | ⬜ Pendiente |
 | 8 | Guardado | ⬜ Pendiente |
 | 9 | Pulido | ⬜ Pendiente |

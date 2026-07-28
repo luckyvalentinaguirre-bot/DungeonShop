@@ -1,8 +1,9 @@
 extends Node
-## Escena de prueba de la Fase 4 (sin UI): simula una jornada de tienda con el modelo
-## híbrido —clientes de mostrador (COUNTER, con regateo) y clientes de estantería
-## (SHELF, autoservicio)— y lo imprime por consola. Escena principal temporal.
-## Ver docs/Roadmap.md (Fase 4). Se retira al llegar a la Fase 7 (interfaz).
+## Escena de prueba de las Fases 4-5 (sin UI): simula una jornada de tienda con el
+## modelo híbrido —clientes de mostrador (COUNTER, con regateo) y clientes de
+## estantería (SHELF, autoservicio)— usando un INVENTARIO real como estantería,
+## y lo imprime por consola. Escena principal temporal.
+## Ver docs/Roadmap.md (Fases 4-5). Se retira al llegar a la Fase 7 (interfaz).
 
 func _ready() -> void:
 	run_demo()
@@ -27,6 +28,10 @@ func run_demo() -> void:
 	print("=== Jornada de tienda — Dungeon Shop (Fase 4) ===")
 	print("Llegan %d clientes." % customers.size())
 
+	# Estantería: un inventario real, surtido desde el catálogo de objetos (.tres).
+	var shelf := _stock_shelf(economy)
+	print("Estantería surtida con %d unidades expuestas." % _total_units(shelf))
+
 	# Reparte según la vía elegida (modelo híbrido).
 	var queue := ShopQueue.new()
 	var shelf_shoppers: Array[Customer] = []
@@ -37,8 +42,9 @@ func run_demo() -> void:
 			shelf_shoppers.append(c)
 
 	_serve_counter(queue, economy, player)
-	_serve_shelf(shelf_shoppers, economy, player)
+	_serve_shelf(shelf_shoppers, economy, player, shelf)
 
+	print("Estantería al cerrar: %d unidades restantes." % _total_units(shelf))
 	print("Caja del tendero al cerrar: %d coronas" % player.balance)
 	print("=== Fin de la jornada ===")
 
@@ -60,29 +66,55 @@ func _serve_counter(queue: ShopQueue, economy: EconomySystem, player: WalletComp
 		queue.decay_patience(0.02)
 		queue.advance()
 
-## Atiende a los clientes de estantería: compran solos del stock expuesto.
-func _serve_shelf(shoppers: Array[Customer], economy: EconomySystem, player: WalletComponent) -> void:
+## Atiende a los clientes de estantería: compran solos del stock expuesto en el
+## inventario real; cada compra descuenta una unidad de la estantería.
+func _serve_shelf(shoppers: Array[Customer], economy: EconomySystem, player: WalletComponent, shelf: Inventory) -> void:
 	print("\n-- Estantería (%d clientes de autoservicio) --" % shoppers.size())
-	var display := _make_display(economy)
 	for c in shoppers:
+		var display := _offers_from_inventory(shelf, economy)
 		var result := ShelfPurchaseResolver.resolve(c.need, display, c.wallet, player, economy.demand)
 		if result.bought:
+			shelf.remove(result.item.data.id, 1)  # descuenta la unidad vendida
 			print("  %s compró %s por %d coronas" % [c.display_name(), result.item.data.display_name, result.price])
 		else:
 			print("  %s se fue sin comprar (%s: quería %s)" % [c.display_name(), result.reason, _cat_name(c.need.category)])
 
-func _make_display(economy: EconomySystem) -> Array:
-	# Stock expuesto en la estantería (en Fase 5 vendrá del inventario real).
-	var display: Array = []
-	var samples := [
-		_named_item(&"potion_heal", "Poción de curación", GameEnums.Category.POTION, 15, 2),
-		_named_item(&"weapon_short_sword", "Espada corta", GameEnums.Category.WEAPON, 40, 3),
-		_named_item(&"tool_torch", "Antorcha", GameEnums.Category.TOOL, 6, 1),
-		_named_item(&"armor_leather", "Jubón de cuero", GameEnums.Category.ARMOR, 35, 2),
-	]
-	for inst in samples:
-		display.append({"item": inst, "price": economy.suggested_price(inst)})
-	return display
+## Surte la estantería (Inventory) desde el catálogo de objetos. Si el catálogo no
+## está disponible, usa objetos creados en código como respaldo.
+func _stock_shelf(economy: EconomySystem) -> Inventory:
+	var shelf := Inventory.new(64)
+	var db := ItemDatabase.new()
+	db.load_all()
+	_stock_one(shelf, db, &"potion_heal", "Poción de curación", GameEnums.Category.POTION, 15, 2, 3)
+	_stock_one(shelf, db, &"weapon_short_sword", "Espada corta", GameEnums.Category.WEAPON, 40, 3, 1)
+	_stock_one(shelf, db, &"tool_torch", "Antorcha", GameEnums.Category.TOOL, 6, 1, 2)
+	_stock_one(shelf, db, &"armor_leather", "Jubón de cuero", GameEnums.Category.ARMOR, 35, 2, 1)
+	return shelf
+
+func _stock_one(shelf: Inventory, db: ItemDatabase, id: StringName, fallback_name: String, category: GameEnums.Category, base_value: int, quality: int, units: int) -> void:
+	var data: ItemData = db.get_item(id)
+	if data == null:
+		data = ItemData.new()
+		data.id = id
+		data.display_name = fallback_name
+		data.category = category
+		data.base_value = base_value
+	shelf.add(ItemInstance.new(data, quality, units))
+
+## Convierte el inventario de la estantería en una lista de ofertas por unidad
+## (precio calculado por la economía), que consume el ShelfPurchaseResolver.
+func _offers_from_inventory(shelf: Inventory, economy: EconomySystem) -> Array:
+	var offers: Array = []
+	for slot in shelf.get_items():
+		var unit := ItemInstance.new(slot.data, slot.quality, 1)
+		offers.append({"item": unit, "price": economy.suggested_price(unit)})
+	return offers
+
+func _total_units(shelf: Inventory) -> int:
+	var total: int = 0
+	for slot in shelf.get_items():
+		total += slot.quantity
+	return total
 
 func _make_item_for(need: CustomerNeed) -> ItemInstance:
 	# El tendero fabrica/ofrece justo lo que piden (calidad un punto por encima).
@@ -92,14 +124,6 @@ func _make_item_for(need: CustomerNeed) -> ItemInstance:
 	it.category = need.category
 	it.base_value = maxi(10, need.budget / 2)
 	return ItemInstance.new(it, mini(5, need.min_quality + 1), 1)
-
-func _named_item(id: StringName, item_name: String, category: GameEnums.Category, base_value: int, quality: int) -> ItemInstance:
-	var it := ItemData.new()
-	it.id = id
-	it.display_name = item_name
-	it.category = category
-	it.base_value = base_value
-	return ItemInstance.new(it, quality, 1)
 
 func _make_pool() -> Array[CustomerData]:
 	var pool: Array[CustomerData] = []
