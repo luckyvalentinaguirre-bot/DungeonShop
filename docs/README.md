@@ -17,6 +17,7 @@ Lee en este orden si eres nuevo en el proyecto:
 | Documento | Qué cubre |
 |-----------|-----------|
 | [GameDesignDocument.md](GameDesignDocument.md) | Visión, pilares, bucle central, público objetivo, alcance |
+| [GameVision.md](GameVision.md) | Visión del diseñador (sin historia): filosofía, sistemas, dirección visual top-down |
 | [Lore.md](Lore.md) | Resumen de historia, geografía, facciones y tono (decisiones cerradas) |
 | [WorldBible.md](WorldBible.md) | **Biblia de mundo (Fase 2):** timeline, mapa, facciones, tensiones, cultura, calendario, arco de la abuela |
 | [Economy.md](Economy.md) | Resumen económico de alto nivel (números, monedas) |

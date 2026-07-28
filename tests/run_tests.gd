@@ -39,6 +39,9 @@ const TEST_SCRIPTS: Array = [
 	# Diálogos y guardado
 	preload("res://tests/unit/test_dialogue_runner.gd"),
 	preload("res://tests/unit/test_save_roundtrip.gd"),
+	# Expansión: distribución, empleados, exploración, investigación
+	preload("res://tests/unit/test_shop_layout.gd"),
+	preload("res://tests/unit/test_expansion_systems.gd"),
 ]
 
 func _initialize() -> void:

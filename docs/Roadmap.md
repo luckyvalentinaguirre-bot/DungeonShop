@@ -159,14 +159,28 @@ mínimas + scripts de pantalla), robusta y convertible a escenas de editor para 
 - [x] Integrado en `GameState.craft()` y en `CraftingScreen` (nivel, requisito,
       subida de nivel); tests de habilidades y de fabricación con habilidad.
 
-**Pendiente (próximos incrementos de la Fase 7):**
-- [ ] Panel de inventario/almacén con arrastrar-soltar.
-- [ ] Sistema de diálogo ([systems/10](systems/10_Dialogue.md)) para clientes recurrentes.
-- [ ] Misiones/tutorial ([systems/11](systems/11_Quests.md)).
-- [ ] Mercado de compra de materiales.
-- [ ] Input map final y soporte de mando ([systems/13](systems/13_Controls.md)).
-- **DoD:** el bucle central es jugable con ratón de principio a fin *(ya alcanzado
-  para vender; se amplía con fabricar/comprar/misiones)*.
+**Incremento 4 — TODOS los sistemas (lógica) ✅**
+Implementados como sistemas puros y testeables, integrados en `GameState` (y en la
+tienda donde aplica), según la [Visión del juego](GameVision.md):
+- [x] Reputación (`ReputationSystem`, con tensiones) — integrada en las ventas.
+- [x] Mercado de compra de materiales (`GameState.buy_material`).
+- [x] Héroes y expediciones (`ExpeditionResolver`, `HeroManager`).
+- [x] Eventos del reino / "jefes" (`EventEngine`, `EventData`, `EventEffect`).
+- [x] Misiones y logros (`QuestSystem`, `AchievementSystem`) — con recompensas.
+- [x] Diálogos (`DialogueRunner`, motor propio).
+- [x] Guardado/carga (`SaveManager`, `GameState.capture/restore`).
+- [x] Distribución de tienda cenital (`ShopLayout`: colocar estantes + asignar producto).
+- [x] Empleados (`EmployeeManager`), exploración/regiones (`ExplorationSystem`),
+      investigación (`ResearchSystem`), decoración (`DecorationData`).
+- [x] ~35 archivos de tests en total.
+
+**Pendiente — capa VISUAL (siguiente gran bloque):**
+- [ ] Render de la tienda en **vista cenital (top-down)** desde `ShopLayout`.
+- [ ] UIs de mercado, empleados, exploración, investigación, misiones/logros, diálogo.
+- [ ] Inventario con arrastrar-soltar; input map final y mando.
+- [ ] Arte y animación finales (sustituir placeholders).
+- **DoD:** el bucle central ya es jugable con ratón; se amplía con la vista cenital
+  y las pantallas de cada sistema.
 
 ### Cómo probarlo (Godot 4.3+)
 Abre el proyecto en el editor y pulsa **F5** (la escena principal es el menú), o:

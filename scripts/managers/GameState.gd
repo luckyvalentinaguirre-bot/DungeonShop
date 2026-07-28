@@ -22,6 +22,10 @@ var achievements: AchievementSystem
 var events: EventEngine
 var event_catalog: Array = []
 var hero_manager: HeroManager
+var layout: ShopLayout
+var employees: EmployeeManager
+var exploration: ExplorationSystem
+var research: ResearchSystem
 ## Materiales que se pueden comprar en el mercado (ids del catálogo).
 var market_materials: Array = [&"mat_iron", &"mat_steel", &"mat_quicksilver"]
 var player_wallet: WalletComponent
@@ -48,6 +52,10 @@ func new_game() -> void:
 	achievements = AchievementSystem.new()
 	events = EventEngine.new()
 	hero_manager = HeroManager.new()
+	layout = ShopLayout.new()
+	employees = EmployeeManager.new()
+	exploration = ExplorationSystem.new()
+	research = ResearchSystem.new()
 
 	economy = EconomySystem.new()
 	economy.name = "EconomySystem"
@@ -213,6 +221,7 @@ func capture_state() -> Dictionary:
 		"reputation": reputation.capture_state(),
 		"demand": economy.demand.capture_state(),
 		"stock": stock.capture_state(),
+		"layout": layout.capture_state(),
 	}
 
 ## Reconstruye la partida desde un diccionario. Requiere que los servicios ya
@@ -226,6 +235,9 @@ func restore_state(data: Dictionary) -> void:
 	reputation.restore_state(data.get("reputation", {}))
 	economy.demand.restore_state(data.get("demand", {}))
 	_restore_stock(data.get("stock", []))
+	var layout_data = data.get("layout", {})
+	if layout_data is Dictionary and not layout_data.is_empty():
+		layout.restore_state(layout_data)
 	day_changed.emit(day)
 	gold_changed.emit(player_wallet.balance)
 
