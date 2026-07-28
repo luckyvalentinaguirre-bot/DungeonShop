@@ -144,7 +144,7 @@ func _refresh_materials() -> void:
 		if slot.data == null or slot.data.category != GameEnums.Category.MATERIAL:
 			continue
 		found = true
-		var available := slot.quantity - _selected_count(slot.data.id)
+		var available: int = int(slot.quantity) - _selected_count(slot.data.id)
 		var btn := UiFactory.button("%s ·x%d· (+)" % [slot.data.display_name, available])
 		btn.custom_minimum_size = Vector2(0, 32)
 		btn.disabled = available <= 0
