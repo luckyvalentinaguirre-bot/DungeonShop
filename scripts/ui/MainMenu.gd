@@ -75,8 +75,12 @@ func _build_animations() -> void:
 	# Destellos: arma legendaria y gemas del estante.
 	_twinkle(_p(0.51, 0.40), Vector2(30, 60))
 	_twinkle(_p(0.052, 0.47), Vector2(40, 40))
-	# Transeúnte que pasa por la calle (a través de la puerta).
+	# Transeúntes que pasan por la calle (a través de la puerta).
 	_spawn_walker(2.5)
+	_spawn_walker(7.0)
+	# Pájaros que cruzan volando por las ventanas y la puerta.
+	_spawn_bird(1.5)
+	_spawn_bird(4.5)
 
 func _fire(pos: Vector2) -> void:
 	var p := _cpu(pos, 42, 0.7)
@@ -222,6 +226,50 @@ func _walker_go() -> void:
 	tw.tween_property(w, "modulate:a", 0.0, 0.5)
 	tw.tween_callback(w.queue_free)
 	tw.tween_callback(func() -> void: _spawn_walker(randf_range(6.0, 12.0)))
+
+# --- pájaros que cruzan volando por las aberturas (ventanas/puerta) ---
+func _spawn_bird(delay: float) -> void:
+	get_tree().create_timer(delay).timeout.connect(_bird_go)
+
+func _bird_go() -> void:
+	# Aberturas con cielo: puerta (centro) y las dos ventanas. El pájaro aparece y
+	# se desvanece dentro de una, para leerse "a través" de ella.
+	var openings := [
+		{"x0": 0.44, "x1": 0.555, "ymin": 0.30, "ymax": 0.38},   # puerta
+		{"x0": 0.255, "x1": 0.395, "ymin": 0.30, "ymax": 0.36},  # ventana izquierda
+		{"x0": 0.605, "x1": 0.715, "ymin": 0.30, "ymax": 0.37},  # ventana derecha
+	]
+	var o: Dictionary = openings[randi() % openings.size()]
+	var rev := randf() < 0.5
+	var yy := randf_range(o["ymin"], o["ymax"])
+	var xa: float = o["x0"] if not rev else o["x1"]
+	var xb: float = o["x1"] if not rev else o["x0"]
+
+	var s := _s.x * 1.4
+	var bird := Polygon2D.new()
+	bird.polygon = PackedVector2Array([
+		Vector2(-7, 0) * s, Vector2(-3, -4) * s, Vector2(-1, -1) * s,
+		Vector2(0, -2) * s, Vector2(1, -1) * s, Vector2(3, -4) * s, Vector2(7, 0) * s,
+		Vector2(3, -2) * s, Vector2(0, 0) * s, Vector2(-3, -2) * s,
+	])
+	bird.color = Color(0.16, 0.14, 0.18, 0.9)
+	add_child(bird)
+	bird.position = _p(xa, yy)
+	bird.scale.x = 1.0 if not rev else -1.0
+	bird.modulate.a = 0.0
+
+	# Aleteo: aplasta/estira en vertical en bucle.
+	var flap := create_tween().set_loops()
+	flap.tween_property(bird, "scale:y", 0.5, 0.16).set_trans(Tween.TRANS_SINE)
+	flap.tween_property(bird, "scale:y", 1.0, 0.16).set_trans(Tween.TRANS_SINE)
+
+	var tw := create_tween()
+	tw.tween_property(bird, "modulate:a", 0.9, 0.4)
+	tw.parallel().tween_property(bird, "position", _p(xb, yy), randf_range(2.6, 4.2)).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(bird, "modulate:a", 0.0, 0.4)
+	tw.tween_callback(func() -> void: flap.kill())
+	tw.tween_callback(bird.queue_free)
+	tw.tween_callback(func() -> void: _spawn_bird(randf_range(2.5, 6.0)))
 
 # ------------------------------------------------------------------- botones
 func _build_hotspots() -> void:
