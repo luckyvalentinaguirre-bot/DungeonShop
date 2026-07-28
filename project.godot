@@ -12,19 +12,18 @@ config_version=5
 
 config/name="Dungeon Shop"
 config/description="A cozy medieval shop-keeping game. You are not the hero — you run the store."
-run/main_scene="res://scenes/main_menu/MainMenu.tscn"
+run/main_scene="res://scenes/dev/DevRoot.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://assets/icons/icon.svg"
 
 [autoload]
 
 ; --- Core managers (order matters: dependencies first) ---
+; Solo se activan los autoloads YA implementados. Los siguientes se añadirán en
+; su fase correspondiente (ver docs/systems/00_Architecture.md §6 y docs/Roadmap.md):
+;   SaveManager (Fase 8), GameState, AudioManager, SceneRouter (Fase 7).
 EventBus="*res://scripts/managers/EventBus.gd"
 GameConfig="*res://scripts/managers/GameConfig.gd"
-SaveManager="*res://scripts/save/SaveManager.gd"
-GameState="*res://scripts/managers/GameState.gd"
-AudioManager="*res://scripts/audio/AudioManager.gd"
-SceneRouter="*res://scripts/managers/SceneRouter.gd"
 
 [display]
 

@@ -46,15 +46,29 @@ sistema de juego implementado todavía.
 
 ---
 
-## Fase 3 — Sistema de economía
+## Fase 3 — Sistema de economía ✅ (completada)
 
 **Objetivo:** primer código de juego. Motor económico funcional y testeado.
-- Implementar `EconomyConfig`, `PriceCalculator`, `DemandModel`, `MarketSystem`,
-  `TransactionResolver`, `WalletComponent` (ver [systems/01](systems/01_Economy.md)).
-- Tests unitarios de precios/transacciones/demanda (GUT).
-- Herramienta de depuración para inspeccionar el mercado.
-- **DoD:** se puede comprar material y vender objeto por consola/escena de prueba,
-  con precios dinámicos, todo cubierto por tests. Sin UI aún.
+- [x] Implementados `EconomyConfig`, `PriceCalculator`, `DemandModel`, `MarketSystem`,
+      `TransactionResolver`, `WalletComponent` y la fachada `EconomySystem`
+      (ver [systems/01](systems/01_Economy.md)). Más datos mínimos `ItemData`/`ItemInstance`
+      y autoloads `EventBus`/`GameConfig`.
+- [x] Tests unitarios de precios/transacciones/demanda/mercado/cartera. **Nota:** se
+      usa un runner propio sin dependencias (`tests/run_tests.gd`) en vez de GUT, para
+      no requerir addons todavía; es migrable a GUT más adelante.
+- [x] Escena de demo sin UI para inspeccionar la economía (`scenes/dev/DevRoot.tscn`).
+- **Decisiones cerradas:** regateo automático por ánimo; demanda global por categoría.
+- **DoD:** ✅ se vende un objeto y se consulta el precio de material con precios
+  dinámicos desde una escena de prueba, todo cubierto por tests. Sin UI.
+
+### Cómo probarlo (en tu máquina, con Godot 4.3+)
+```bash
+# Ejecutar la demo (imprime un escenario económico por consola):
+godot --headless --path . res://scenes/dev/DevRoot.tscn
+# Ejecutar los tests (sale con código 0 si todo pasa):
+godot --headless --path . --script res://tests/run_tests.gd
+```
+O abre el proyecto en el editor de Godot y pulsa **F5**.
 
 ---
 

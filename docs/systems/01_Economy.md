@@ -106,8 +106,18 @@ una API mínima a la capa de managers. Cada pieza < 200 líneas.
 
 ## 10. Preguntas abiertas
 
-- 🔴 ¿Negociación (haggle) por minijuego, por elección de diálogo, o automática por
-  ánimo del cliente? Define acoplamiento con [Customers](02_Customers.md) y
-  [Dialogue](10_Dialogue.md). Decidir antes de Fase 3.
-- 🔴 ¿La demanda es global o segmentada por facción/barrio?
-- 🟡 Valores concretos de `EconomyConfig` se calibran con playtesting en Fase 3.
+- 🟢 *(cerrada en Fase 3)* Negociación = **automática por ánimo** del cliente
+  (ver [Customers](02_Customers.md) §7). Se implementará el `HaggleResolver` en Fase 4.
+- 🟢 *(cerrada en Fase 3)* Demanda = **global por categoría** en v1.0 (más simple de
+  calibrar). La segmentación por facción/barrio queda como posible ampliación post-v1.
+- 🟡 Valores concretos de `EconomyConfig` se calibran con playtesting (arrancan con
+  los defaults de `resources/config/EconomyConfig.tres`).
+
+## 11. Estado de implementación (Fase 3) ✅
+
+Implementado y cubierto por tests (`tests/unit/`, runner `tests/run_tests.gd`):
+`EconomyConfig`, `ItemData`/`ItemInstance` (mínimos), `PriceCalculator`,
+`DemandModel`, `WalletComponent`, `MarketSystem`, `TransactionResolver` y la fachada
+`EconomySystem`. Demo ejecutable sin UI en `scenes/dev/DevRoot.tscn`.
+**Pendiente para fases posteriores:** mover inventario en las transacciones (Fase 5),
+gastos recurrentes/préstamos y `LedgerService` (Fase 9), señal `player_bankrupt_warning`.

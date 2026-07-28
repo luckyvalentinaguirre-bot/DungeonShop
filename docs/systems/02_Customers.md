@@ -68,17 +68,17 @@ Spawner crea cliente → entra y se coloca en el mostrador →
     rechaza → se va (impacto leve en ánimo/reputación según trato)
 ```
 
-## 7. Negociación (haggle) 🔴
+## 7. Negociación (haggle) 🟢 (cerrado en Fase 3)
 
-Tres opciones sobre la mesa (decisión pendiente, ver [Economy](01_Economy.md)):
+**Decisión:** negociación **automática por ánimo**. El cliente acepta o rechaza
+según su `MoodComponent`, su presupuesto y cuánto se desvía la oferta del precio
+justo (`EconomyConfig.haggle_tolerance` marca el margen tolerado con ánimo neutro).
+Simple, fluido y *cozy* — la base ideal.
 
-1. **Por ánimo (automática):** el cliente acepta/rechaza según `MoodComponent` y
-   desviación del precio justo. Simple, *cozy*.
-2. **Por diálogo:** el jugador elige réplicas que suben/bajan la disposición.
-3. **Minijuego ligero.** (Riesgo: puede romper el tono cozy.)
-
-**Recomendación de diseño:** opción 1 como base + toques de opción 2 en clientes
-recurrentes. Cerrar antes de Fase 4.
+- **Implementación:** un `HaggleResolver` puro (Fase 4) que, dado precio ofrecido,
+  precio justo, presupuesto y ánimo, devuelve aceptar/rechazar y el impacto en ánimo.
+- **Ampliación futura (opcional):** toques de diálogo en clientes recurrentes para
+  darles personalidad, sin convertirlo en minijuego. No es v1.0.
 
 ## 8. Ánimo y paciencia
 
@@ -109,6 +109,7 @@ recurrentes. Cerrar antes de Fase 4.
 
 ## 11. Preguntas abiertas
 
-- 🔴 Mecánica de negociación (§7).
+- 🟢 *(cerrada en Fase 3)* Mecánica de negociación = automática por ánimo (§7).
 - 🔴 ¿Cola de clientes simultánea o de uno en uno en el mostrador? Afecta a UI y ritmo.
-- 🟡 Cuántos recurrentes en v1.0 (objetivo ~20, ver GDD scope).
+  Decidir al empezar Fase 4.
+- 🟡 Cuántos recurrentes en v1.0 (objetivo ~14–20, ver GDD scope y [NPCs](../NPCs.md)).

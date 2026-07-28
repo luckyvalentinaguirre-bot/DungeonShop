@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="EconomyConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/EconomyConfig.gd" id="1_econ"]
+
+[resource]
+script = ExtResource("1_econ")
+quality_multipliers = PackedFloat32Array(0.6, 0.85, 1, 1.25, 1.6, 2)
+demand_neutral = 1.0
+demand_min = 0.5
+demand_max = 2.0
+demand_request_step = 0.05
+demand_sale_step = 0.04
+demand_reversion_rate = 0.15
+reputation_mult_min = 0.9
+reputation_mult_max = 1.5
+market_weekly_volatility = 0.2
+market_price_min_mult = 0.5
+market_price_max_mult = 1.8
+haggle_tolerance = 0.15
+days_per_week = 6
