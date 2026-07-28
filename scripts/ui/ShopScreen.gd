@@ -6,6 +6,7 @@ extends Control
 
 var _gold_label: Label
 var _day_label: Label
+var _prestige_label: Label
 var _customer_label: Label
 var _price_label: Label
 var _selected_label: Label
@@ -64,6 +65,8 @@ func _build_hud() -> Control:
 	row.add_child(_gold_label)
 	_day_label = UiFactory.label("Jornada: 0", 20)
 	row.add_child(_day_label)
+	_prestige_label = UiFactory.label("Prestigio: 0", 20, UiFactory.COL_ARCANE)
+	row.add_child(_prestige_label)
 
 	var spacer := Control.new()
 	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -176,9 +179,11 @@ func _resolve_shelf(customer: Customer) -> void:
 	var result := ShelfPurchaseResolver.resolve(customer.need, offers, customer.wallet, GameState.player_wallet, GameState.economy.demand)
 	if result.bought:
 		GameState.stock.remove(result.item.data.id, 1)
+		GameState.record_sale_reputation(customer)
 		_log_line("[color=#8fd08a]%s cogió %s de la estantería y pagó %d coronas.[/color]" % [customer.display_name(), result.item.data.display_name, result.price])
 		_character.play_happy()
 		_refresh_stock()
+		_refresh_hud()
 	else:
 		_log_line("%s miró la estantería y se fue sin comprar (%s)." % [customer.display_name(), _cat_name(customer.need.category)])
 		_character.play_sad()
@@ -213,8 +218,10 @@ func _on_offer() -> void:
 	var result := _controller.receive_offer(unit, _offer_price, GameState.economy, GameState.player_wallet)
 	if result.sold:
 		GameState.stock.remove(_selected_slot.data.id, 1)
+		GameState.record_sale_reputation(_current)
 		_log_line("[color=#8fd08a]Vendiste %s a %s por %d coronas.[/color]" % [_selected_slot.data.display_name, _current.display_name(), _offer_price])
 		_character.play_happy()
+		_refresh_hud()
 		_end_visit()
 	elif result.reason == "wrong_item":
 		_log_line("A %s no le sirve %s (quería %s)." % [_current.display_name(), _selected_slot.data.display_name, _cat_name(_current.need.category)])
@@ -243,6 +250,8 @@ func _refresh_hud() -> void:
 		_gold_label.text = "Oro: %d" % GameState.gold()
 	if _day_label != null:
 		_day_label.text = "Jornada: %d" % GameState.day
+	if _prestige_label != null:
+		_prestige_label.text = "Prestigio: %d" % int(GameState.reputation.prestige())
 
 func _refresh_stock() -> void:
 	for child in _stock_box.get_children():

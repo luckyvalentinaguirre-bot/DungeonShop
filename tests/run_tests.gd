@@ -29,6 +29,9 @@ const TEST_SCRIPTS: Array = [
 	preload("res://tests/unit/test_crafting_resolver.gd"),
 	# Habilidades (Fase 7)
 	preload("res://tests/unit/test_player_skills.gd"),
+	# Reputación y héroes
+	preload("res://tests/unit/test_reputation_system.gd"),
+	preload("res://tests/unit/test_expedition_resolver.gd"),
 ]
 
 func _initialize() -> void:

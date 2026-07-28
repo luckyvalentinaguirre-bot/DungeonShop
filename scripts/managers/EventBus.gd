@@ -18,8 +18,30 @@ signal customer_need_presented(need: Object)
 signal customer_satisfied(customer: Object, mood: float)
 signal customer_left_unhappy(customer: Object)
 
+# --- Reputación ---
+signal reputation_changed(faction: int, value: float)
+signal prestige_changed(value: float)
+
+# --- Héroes ---
+signal hero_departed(hero: Object, expedition: Object)
+signal hero_returned(hero: Object, outcome: Object)
+signal hero_lost(hero: Object)
+
+# --- Fabricación (Fase 6-7) ---
+signal item_crafted(item: Object)
+
+# --- Eventos del reino ---
+signal event_started(event: Object)
+signal event_ended(event: Object)
+
+# --- Misiones y logros ---
+signal quest_completed(quest: Object)
+signal quest_objective_updated(quest: Object, objective: Object)
+signal achievement_unlocked(achievement: Object)
+
+# --- Guardado ---
+signal game_saved(slot: int)
+signal game_loaded(slot: int)
+
 # --- Tiempo (compartido) ---
 signal day_advanced(day: int)
-
-# Las señales de héroes, reputación, fabricación, eventos, misiones y logros se
-# añadirán en sus respectivas fases (ver docs/systems/*).

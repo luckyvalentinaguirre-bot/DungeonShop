@@ -13,6 +13,9 @@ var economy: EconomySystem
 var item_db: ItemDatabase
 var crafting: CraftingLibrary
 var skills: PlayerSkills
+var reputation: ReputationSystem
+## Materiales que se pueden comprar en el mercado (ids del catálogo).
+var market_materials: Array = [&"mat_iron", &"mat_steel", &"mat_quicksilver"]
 var player_wallet: WalletComponent
 ## Stock de la tienda (almacén + estantería unificados en esta primera versión).
 var stock: Inventory
@@ -32,11 +35,16 @@ func new_game() -> void:
 	crafting.load_all()
 
 	skills = PlayerSkills.new()
+	reputation = ReputationSystem.new()
 
 	economy = EconomySystem.new()
 	economy.name = "EconomySystem"
 	add_child(economy)
 	economy.setup(_config(), rng.randi())
+	for mat_id in market_materials:
+		var mat := item_db.get_item(mat_id)
+		if mat != null:
+			economy.market.track_material(mat)
 
 	player_wallet = WalletComponent.new()
 	player_wallet.name = "PlayerWallet"
@@ -84,6 +92,32 @@ func craft(recipe: RecipeData, materials: Array) -> CraftingResolver.Result:
 		if skills.add_xp(PlayerSkills.SMITHING, 25):
 			skill_leveled.emit(PlayerSkills.SMITHING, skills.level_of(PlayerSkills.SMITHING))
 	return result
+
+## Registra el efecto de una venta atendida en la reputación (según la facción del
+## cliente y su ánimo). Lo llama la UI tras una venta. Ver docs/systems/04_Reputation.md.
+func record_sale_reputation(customer: Customer) -> void:
+	if customer != null and customer.data != null and reputation != null:
+		reputation.register_sale(customer.data.faction, customer.mood.value)
+
+## Precio de compra actual de un material en el mercado.
+func material_price(item_id: StringName) -> int:
+	var mat := item_db.get_item(item_id)
+	return economy.market.material_price(mat) if mat != null else 0
+
+## Compra 'qty' unidades de un material al mercado: paga y lo añade al stock.
+func buy_material(item_id: StringName, qty: int) -> bool:
+	var mat := item_db.get_item(item_id)
+	if mat == null or qty <= 0:
+		return false
+	var cost := economy.market.material_price(mat) * qty
+	if not player_wallet.can_afford(cost):
+		return false
+	player_wallet.pay(cost)
+	stock.add(ItemInstance.new(mat, 0, qty))
+	var bus := get_node_or_null("/root/EventBus")
+	if bus != null:
+		bus.emit_signal("material_purchased", mat, qty, cost)
+	return true
 
 ## Avanza una jornada: la demanda revierte y (cada semana) fluctúa el mercado.
 func advance_day() -> void:
