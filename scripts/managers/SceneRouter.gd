@@ -7,6 +7,7 @@ extends Node
 
 const MAIN_MENU := "res://scenes/main_menu/MainMenu.tscn"
 const SHOP := "res://scenes/shop/Shop.tscn"
+const CRAFTING := "res://scenes/crafting/CraftingScreen.tscn"
 
 func goto(path: String) -> void:
 	get_tree().change_scene_to_file(path)
@@ -16,3 +17,6 @@ func goto_shop() -> void:
 
 func goto_main_menu() -> void:
 	goto(MAIN_MENU)
+
+func goto_crafting() -> void:
+	goto(CRAFTING)

@@ -10,6 +10,7 @@ signal day_changed(day: int)
 
 var economy: EconomySystem
 var item_db: ItemDatabase
+var crafting: CraftingLibrary
 var player_wallet: WalletComponent
 ## Stock de la tienda (almacén + estantería unificados en esta primera versión).
 var stock: Inventory
@@ -24,6 +25,9 @@ func new_game() -> void:
 
 	item_db = ItemDatabase.new()
 	item_db.load_all()
+
+	crafting = CraftingLibrary.new()
+	crafting.load_all()
 
 	economy = EconomySystem.new()
 	economy.name = "EconomySystem"
@@ -53,6 +57,18 @@ func gold() -> int:
 func spawn_customer() -> Customer:
 	var arr := CustomerSpawner.spawn_day(customer_pool, 1, rng)
 	return arr[0] if not arr.is_empty() else null
+
+## Fabrica un objeto con la receta y los materiales elegidos. Si tiene éxito,
+## consume los materiales del stock y añade el resultado. Ver docs/systems/05_Crafting.md.
+func craft(recipe: RecipeData, materials: Array) -> CraftingResolver.Result:
+	var station := crafting.station(recipe.station_id) if crafting != null else null
+	var result := CraftingResolver.craft(recipe, materials, station, item_db, rng)
+	if result.success:
+		for m in materials:
+			if m != null and m.data != null:
+				stock.remove(m.data.id, m.quantity)
+		stock.add(result.output)
+	return result
 
 ## Avanza una jornada: la demanda revierte y (cada semana) fluctúa el mercado.
 func advance_day() -> void:

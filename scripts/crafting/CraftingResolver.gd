@@ -65,6 +65,13 @@ static func craft(recipe: RecipeData, materials: Array, station: CraftingStation
 	r.reason = "crafted"
 	return r
 
+## ¿Los materiales elegidos son suficientes para la receta? (comprobación pública
+## para que la UI pueda habilitar/deshabilitar el botón de fabricar).
+static func satisfies(recipe: RecipeData, materials: Array) -> bool:
+	if recipe == null:
+		return false
+	return _satisfies_slots(recipe, materials)
+
 ## ¿Los materiales aportados cubren todas las ranuras (categoría + cantidad)?
 static func _satisfies_slots(recipe: RecipeData, materials: Array) -> bool:
 	var provided: Dictionary = {}

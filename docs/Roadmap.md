@@ -144,8 +144,13 @@ mínimas + scripts de pantalla), robusta y convertible a escenas de editor para 
       precio ±, y autoservicio de estantería), vender del stock, avanzar jornada.
 - [x] `UiFactory` (widgets con estilo cozy por código).
 
+**Incremento 2 — Panel de fabricación ✅**
+- [x] `CraftingLibrary` (carga recetas y estaciones de `resources/`).
+- [x] `GameState.craft()` (fabrica, consume materiales del stock, añade el resultado).
+- [x] `CraftingScreen`: elige receta + materiales del stock y fabrica; muestra en vivo
+      calidad, defecto y perfil según los materiales. Accesible desde la tienda.
+
 **Pendiente (próximos incrementos de la Fase 7):**
-- [ ] Panel de fabricación (usar `CraftingResolver` desde la UI, consumir materiales).
 - [ ] Panel de inventario/almacén con arrastrar-soltar.
 - [ ] Sistema de diálogo ([systems/10](systems/10_Dialogue.md)) para clientes recurrentes.
 - [ ] Misiones/tutorial ([systems/11](systems/11_Quests.md)).
